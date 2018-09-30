@@ -1,8 +1,12 @@
 import test from 'ava'
 import _create from '../src'
-import sheet from './_sheet'
+import createSheet from '../src/server'
 
-const create = () => _create(sheet)
+const create = () =>
+  _create({
+    sheet: createSheet(),
+    mediaSheet: createSheet(),
+  })
 
 test('works', t => {
   const { StyleSheet, StyleResolver } = create()

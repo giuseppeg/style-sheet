@@ -16,6 +16,13 @@ test('inserts rules', t => {
   })
 })
 
+test('inserts returns the index', t => {
+  const sheet = create()
+  sheet.insertRule('div { color: red }')
+  const index = sheet.insertRule('div { color: green }')
+  t.is(index, 1)
+})
+
 test('increases index when inserting rules', t => {
   const sheet = create()
   sheet.insertRule('div { color: red }')
@@ -30,6 +37,13 @@ test('inserts rules at index', t => {
   t.deepEqual(sheet.cssRules, {
     0: { cssText: 'div { color: green }' },
     length: 1,
+  })
+})
+
+test('throws when providing a index > cssRules.length', t => {
+  const sheet = create()
+  t.throws(() => {
+    sheet.insertRule('div { color: green }', 10)
   })
 })
 

@@ -33,8 +33,11 @@ function concatClassName(dest, className) {
   return { shouldInject: true, className: `${dest} ${className}` }
 }
 
-function createStyleResolver(sheet, rules) {
-  const fromServer = (sheet.ownerNode || {}).textContent || ''
+function createStyleResolver(sheets, rules) {
+  const { sheet, mediaSheet } = sheets
+  const fromServer =
+    ((sheet.ownerNode || {}).textContent || '') +
+    ((mediaSheet.ownerNode || {}).textContent || '')
   const resolved = {}
   const injected = {}
 
@@ -61,7 +64,9 @@ function createStyleResolver(sheet, rules) {
           className = result.className
           if (result.shouldInject && !injected[current]) {
             if (fromServer.indexOf(current) == -1) {
-              sheet.insertRule(rules[current])
+              ;(current.charAt(0) === '@' ? mediaSheet : sheet).insertRule(
+                rules[current]
+              )
             }
             injected[current] = true
           }
@@ -74,18 +79,35 @@ function createStyleResolver(sheet, rules) {
   }
 }
 
-function createSheet() {
+export function createSheets(document = document) {
   const style = document.createElement('style')
+  const mediaStyle = document.createElement('style')
   document.head.appendChild(style)
-  return style.sheet
+  document.head.appendChild(mediaStyle)
+
+  return {
+    sheet: style.sheet,
+    mediaSheet: mediaStyle.sheet,
+  }
 }
 
-function create(sheet = createSheet()) {
+function create(sheets = createSheets()) {
   const rules = {}
+
+  if (!sheets.sheet || !sheets.mediaSheet) {
+    throw new Error(
+      `Create must be called with an object that contains two objects, sheet and mediaSheet,
+      that implement the CSSStyleSheet interface.
+
+      To preserve determinism media queries should be inserted in a separate style sheet,
+      after the main sheet.
+    `
+    )
+  }
 
   return {
     StyleSheet: createStyleSheet(rules),
-    StyleResolver: createStyleResolver(sheet, rules),
+    StyleResolver: createStyleResolver(sheets, rules),
   }
 }
 
