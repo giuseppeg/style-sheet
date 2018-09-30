@@ -8,7 +8,11 @@
     "clean": "rm -rf dist",
     "build": "babel src --out-dir dist",
     "dev": "npm run build --watch",
-    "test": "ava",
+    "ava": "ava",
+    "ava:e2e": "ava test/e2e/test.js",
+    "test": "run-p --race test:e2e:server ava",
+    "test:e2e": "run-p --race test:e2e:server ava:e2e",
+    "test:e2e:server": "serve ./test/e2e",
     "lint": "xo",
     "format": "prettier --single-quote --trailing-comma=es5 --no-semi --write all {src,test,*}/**/*.js"
   },
@@ -21,7 +25,11 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
     "ava": "^1.0.0-beta.8",
+    "npm-run-all": "^4.1.3",
     "prettier": "^1.14.3",
+    "puppeteer": "^1.8.0",
+    "regenerator-runtime": "^0.12.1",
+    "serve": "^10.0.2",
     "xo": "^0.23.0"
   },
   "dependencies": {
