@@ -1,5 +1,6 @@
 import compile from './compile'
 import validate from './validate'
+import { fromServer } from './server'
 
 const CLASSNAME_PREFIX = CLASSNAME_PREFIX
 
@@ -35,9 +36,7 @@ function concatClassName(dest, className) {
 
 function createStyleResolver(sheets, rules) {
   const { sheet, mediaSheet } = sheets
-  const fromServer =
-    ((sheet.ownerNode || {}).textContent || '') +
-    ((mediaSheet.ownerNode || {}).textContent || '')
+  const serverStyles = fromServer(sheets)
   const resolved = {}
   const injected = {}
 
@@ -63,7 +62,7 @@ function createStyleResolver(sheets, rules) {
           const result = concatClassName(className, current)
           className = result.className
           if (result.shouldInject && !injected[current]) {
-            if (fromServer.indexOf(current) == -1) {
+            if (serverStyles.indexOf(current) == -1) {
               ;(current.charAt(0) === '@' ? mediaSheet : sheet).insertRule(
                 rules[current]
               )
