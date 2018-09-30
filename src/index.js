@@ -1,6 +1,8 @@
 import compile from './compile'
 import validate from './validate'
 
+const CLASSNAME_PREFIX = CLASSNAME_PREFIX
+
 function createStyleSheet(rules) {
   return {
     create: styles => {
@@ -16,12 +18,12 @@ function createStyleSheet(rules) {
       }
 
       return locals
-    }
+    },
   }
 }
 
 function concatClassName(dest, className) {
-  if (className.substr(0, 4) !== 'dss_') {
+  if (className.substr(0, 4) !== CLASSNAME_PREFIX) {
     return { shouldInject: false, className: `${className} ${dest}` }
   }
   const property = className.substr(0, className.indexOf('-'))
@@ -68,14 +70,14 @@ function createStyleResolver(sheet, rules) {
 
       resolved[stylesToString] = className.trim()
       return resolved[stylesToString]
-    }
+    },
   }
 }
 
 function createSheet() {
-  return {
-    insertRule() {}
-  }
+  const style = document.createElement('style')
+  document.head.appendChild(style)
+  return style.sheet
 }
 
 function create(sheet = createSheet()) {

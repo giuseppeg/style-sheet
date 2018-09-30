@@ -37,12 +37,7 @@ const parse = (obj, descendants, media, opts) => {
         continue
       case 'number':
       case 'string':
-        const className = createClassName(
-          key,
-          value,
-          descendants,
-          media,
-        )
+        const className = createClassName(key, value, descendants, media)
         if (rules[className]) {
           return
         }
@@ -54,7 +49,7 @@ const parse = (obj, descendants, media, opts) => {
   return rules
 }
 
-export default (obj) => {
+export default obj => {
   if (!obj) {
     throw new Error('DSS parser invoked without a mandatory styles object.')
   }
