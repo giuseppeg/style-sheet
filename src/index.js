@@ -1,8 +1,10 @@
 import compile from './compile'
-import validate from './validate'
 import { fromServer } from './server'
 
-const CLASSNAME_PREFIX = CLASSNAME_PREFIX
+let validate = () => {}
+if (process.env.NODE_ENV !== 'production') {
+  validate = require('./validate').default
+}
 
 function createStyleSheet(rules) {
   return {
@@ -11,8 +13,9 @@ function createStyleSheet(rules) {
 
       for (const token in styles) {
         const rule = styles[token]
-        // TODO rememeber to validate only in DEV
-        validate(rule, null)
+        if (process.env.NODE_ENV !== 'production') {
+          validate(rule, null)
+        }
         const compiled = compile(rule)
         locals[token] = Object.keys(compiled)
         Object.assign(rules, compiled)
@@ -24,7 +27,7 @@ function createStyleSheet(rules) {
 }
 
 function concatClassName(dest, className) {
-  if (className.substr(0, 4) !== CLASSNAME_PREFIX) {
+  if (className.substr(0, 4) !== 'dss_') {
     return { shouldInject: false, className: `${className} ${dest}` }
   }
   const property = className.substr(0, className.indexOf('-'))

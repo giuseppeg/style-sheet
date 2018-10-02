@@ -6,15 +6,17 @@
   "scripts": {
     "prepare": "npm run clean && npm run build",
     "clean": "rm -rf dist",
-    "build": "babel src --out-dir dist",
-    "dev": "npm run build --watch",
+    "build": "npm run build:dev && npm run build:prod && babel src/server.js -o dist/server.js",
+    "build:dev": "NODE_ENV=development rollup -c",
+    "build:prod": "NODE_ENV=production rollup -c",
     "ava": "ava",
     "ava:e2e": "ava test/e2e/test.js",
+    "pretest": "npm run build:dev",
     "test": "run-p --race test:e2e:server ava",
     "test:e2e": "run-p --race test:e2e:server ava:e2e",
     "test:e2e:server": "serve ./test/e2e",
     "lint": "xo",
-    "format": "prettier --single-quote --trailing-comma=es5 --no-semi --write all {src,test,*}/**/*.js"
+    "format": "prettier --single-quote --trailing-comma=es5 --no-semi --write all *.js {src,test,*}/**/*.js"
   },
   "keywords": [],
   "author": "Giuseppe Gurgone",
@@ -29,6 +31,11 @@
     "prettier": "^1.14.3",
     "puppeteer": "^1.8.0",
     "regenerator-runtime": "^0.12.1",
+    "rollup": "^0.66.2",
+    "rollup-plugin-babel": "^4.0.3",
+    "rollup-plugin-commonjs": "^9.1.8",
+    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-replace": "^2.0.0",
     "serve": "^10.0.2",
     "xo": "^0.23.0"
   },
