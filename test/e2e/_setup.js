@@ -7,7 +7,6 @@ global.test = test
 test.before(async () => {
   global.browser = await puppeteer.launch()
   global.page = await browser.newPage()
-  await page.goto('http://localhost:5000/test.html')
 })
 
 test.after.always(async () => {
