@@ -1,10 +1,6 @@
 import compile from './compile'
+import validate from './validate'
 import { fromServer } from './server'
-
-let validate = () => {}
-if (process.env.NODE_ENV !== 'production') {
-  validate = require('./validate').default
-}
 
 function createStyleSheet(rules) {
   return {
@@ -81,7 +77,7 @@ function createStyleResolver(sheets, rules) {
   }
 }
 
-export function createSheets(document = document) {
+export function createSheets(document = window.document) {
   const style = document.createElement('style')
   const mediaStyle = document.createElement('style')
   document.head.appendChild(style)

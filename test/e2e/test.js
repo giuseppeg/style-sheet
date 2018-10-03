@@ -3,9 +3,9 @@ require('./_setup')
 test('page title', async t => {
   await page.goto('http://localhost:5000/test.html', { waitUntil: 'load' })
 
-  const result = await page.evaluate(() => {
+  const color = await page.evaluate(() => {
     const root = document.querySelector('#root')
-    const { StyleSheet, StyleResolver } = window['style-sheet'].default.create()
+    const { StyleSheet, StyleResolver } = styleSheet.default()
     const styles = StyleSheet.create({
       root: {
         color: 'green',

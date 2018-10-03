@@ -12,7 +12,7 @@ export default {
   output: {
     file: outputFile,
     format: 'umd',
-    name: 'style-sheet',
+    name: 'styleSheet',
   },
   plugins: [
     replace({
