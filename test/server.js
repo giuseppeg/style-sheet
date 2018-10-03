@@ -1,5 +1,5 @@
 import test from 'ava'
-import create, { flush } from '../src/server'
+import { createSheet as create, flush } from '../src/server'
 
 test('creates a sheet', t => {
   const sheet = create()

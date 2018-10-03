@@ -1,4 +1,4 @@
-export default function createSheet() {
+export function createSheet() {
   const cssRules = { length: 0 }
   return {
     insertRule(rule, index = cssRules.length) {

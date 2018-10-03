@@ -5,7 +5,7 @@ test('page title', async t => {
 
   const color = await page.evaluate(() => {
     const root = document.querySelector('#root')
-    const { StyleSheet, StyleResolver } = styleSheet.default()
+    const { StyleSheet, StyleResolver } = styleSheet.create()
     const styles = StyleSheet.create({
       root: {
         color: 'green',

@@ -89,7 +89,7 @@ export function createSheets(document = window.document) {
   }
 }
 
-function create(sheets = createSheets()) {
+export function create(sheets = createSheets()) {
   const rules = {}
 
   if (!sheets.sheet || !sheets.mediaSheet) {
@@ -108,5 +108,3 @@ function create(sheets = createSheets()) {
     StyleResolver: createStyleResolver(sheets, rules),
   }
 }
-
-export default create

@@ -1,6 +1,6 @@
 import test from 'ava'
-import _create from '../src'
-import createSheet from '../src/server'
+import { create as _create } from '../src'
+import { createSheet } from '../src/server'
 
 const create = () =>
   _create({
