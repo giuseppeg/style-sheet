@@ -107,6 +107,15 @@ export function create(sheets = createSheets()) {
     )
   }
 
+  // Moves link tag between the two style tags so that:
+  // 1. new regular rules are appended before
+  // 2. new at rules are appended after
+  // This is necessary to preserve determinism due to specificity.
+  const linkNode = sheets.linkSheet && sheets.linkSheet.ownerNode
+  if (linkNode) {
+    linkNode.parentNode.insertBefore(linkNode, sheets.mediaSheet.ownerNode)
+  }
+
   return {
     StyleSheet: createStyleSheet(rules),
     StyleResolver: createStyleResolver(sheets, rules),

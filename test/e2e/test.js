@@ -158,3 +158,22 @@ test('reconciles link tags i.e. inserts only new rules', async t => {
 
   t.is(css, '.dss_h28rbs-b5mm4 { color: green; }')
 })
+
+test('moves link tag to be in between the style tags', async t => {
+  await gotoPage('test.html')
+  await page.addStyleTag({ url: '/fixtures/external.css' })
+
+  const html = await page.evaluate(() => {
+    const sheets = styleSheet.createSheets()
+    sheets.linkSheet = document.querySelector('link').sheet
+    const { StyleSheet, StyleResolver } = styleSheet.create(sheets)
+
+    return Array.prototype.map
+      .call(document.querySelectorAll('style, link'), element => {
+        return element.tagName
+      })
+      .join('|')
+  })
+
+  t.is(html, 'STYLE|LINK|STYLE')
+})
