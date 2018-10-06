@@ -98,6 +98,43 @@ test('when reconciling does not add new rules if they exist', async t => {
   t.is(css, '.dss_h28rbs-i0tgik { color: red; }')
 })
 
+test('can use any style tag in the page', async t => {
+  await gotoPage('test.html')
+
+  const results = await page.evaluate(() => {
+    const style = document.createElement('style')
+    const mediaStyle = document.createElement('style')
+    style.textContent = '.dss_h28rbs-i0tgik {color:red}'
+    document.head.appendChild(style)
+    document.head.appendChild(mediaStyle)
+
+    const sheets = {
+      sheet: style.sheet,
+      mediaSheet: mediaStyle.sheet,
+    }
+
+    const { StyleSheet, StyleResolver } = styleSheet.create(sheets)
+    const styles = StyleSheet.create({
+      test: {
+        color: 'green',
+      },
+    })
+
+    const root = document.querySelector('#root')
+    // Should resolve to test2.color (green)
+    root.className = StyleResolver.resolve(['dss_h28rbs-i0tgik', styles.test])
+    const result = {
+      green: getComputedStyle(root).getPropertyValue('color'),
+    }
+    // Should resolve to test1.color (red)
+    root.className = StyleResolver.resolve([styles.test, 'dss_h28rbs-i0tgik'])
+    result.red = getComputedStyle(root).getPropertyValue('color')
+    return JSON.stringify(result)
+  })
+
+  t.is(results, '{"green":"rgb(0, 128, 0)","red":"rgb(255, 0, 0)"}')
+})
+
 test('reconciles link tags i.e. inserts only new rules', async t => {
   await gotoPage('test.html')
   await page.addStyleTag({ url: '/fixtures/external.css' })
