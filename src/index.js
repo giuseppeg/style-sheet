@@ -84,8 +84,12 @@ export function createSheets(document = window.document) {
   document.head.appendChild(mediaStyle)
 
   return {
-    sheet: style.sheet,
-    mediaSheet: mediaStyle.sheet,
+    get sheet() {
+      return style.sheet
+    },
+    get mediaSheet() {
+      return mediaStyle.sheet
+    },
   }
 }
 
