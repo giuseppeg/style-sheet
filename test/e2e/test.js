@@ -18,6 +18,37 @@ test('minimal testcase', async t => {
   t.is(color, 'rgb(0, 128, 0)')
 })
 
+test('resolves deterministically', async t => {
+  await gotoPage('test.html')
+
+  const results = await page.evaluate(() => {
+    const { StyleSheet, StyleResolver } = styleSheet.create()
+    const test1 = StyleSheet.create({
+      test: {
+        color: 'red',
+      },
+    }).test
+    const test2 = StyleSheet.create({
+      test2: {
+        color: 'green',
+      },
+    }).test2
+
+    const root = document.querySelector('#root')
+    // Should resolve to test2.color (green)
+    root.className = StyleResolver.resolve([test1, test2])
+    const result = {
+      green: getComputedStyle(root).getPropertyValue('color'),
+    }
+    // Should resolve to test1.color (red)
+    root.className = StyleResolver.resolve([test2, test1])
+    result.red = getComputedStyle(root).getPropertyValue('color')
+    return JSON.stringify(result)
+  })
+
+  t.is(results, '{"green":"rgb(0, 128, 0)","red":"rgb(255, 0, 0)"}')
+})
+
 test('reconciles style tags when resolving new rules', async t => {
   await gotoPage('test.html')
 
