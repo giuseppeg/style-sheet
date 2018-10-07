@@ -40,6 +40,9 @@ function createStyleResolver(sheets, rules) {
   const injected = {}
 
   return {
+    getStyleSheet() {
+      return sheets
+    },
     resolve(style) {
       const stylesToString = String(style)
 

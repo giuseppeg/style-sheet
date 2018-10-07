@@ -15,11 +15,12 @@
     "test:copy:lib": "npm run clean && npm run build:dev && mkdir -p test/e2e/dist && cp dist/dev.js test/e2e/dist/_styleSheet.js",
     "pretest": "npm run test:copy:lib",
     "test": "run-p --race test:e2e:server ava",
+    "test:unit": "ava test/*.js",
     "pretest:e2e": "npm run test:copy:lib",
     "test:e2e": "run-p --race test:e2e:server ava:e2e",
     "test:e2e:server": "serve ./test/e2e",
     "lint": "xo",
-    "format": "prettier --single-quote --trailing-comma=es5 --no-semi --write all *.js {src,test,*}/**/*.js"
+    "format": "prettier --single-quote --trailing-comma=es5 --no-semi --write all *.js {src,test}/*.js {src,test}/**/*.js"
   },
   "keywords": [],
   "author": "Giuseppe Gurgone",
@@ -43,7 +44,8 @@
     "xo": "^0.23.0"
   },
   "dependencies": {
-    "fnv1a": "^1.0.1"
+    "fnv1a": "^1.0.1",
+    "inline-style-prefixer": "^5.0.1"
   },
   "ava": {
     "require": [

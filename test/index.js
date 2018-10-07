@@ -1,6 +1,6 @@
 import test from 'ava'
 import { create as _create } from '../src'
-import { createSheet } from '../src/server'
+import { createSheet, cssRulesToString } from '../src/server'
 
 const create = () =>
   _create({
@@ -16,8 +16,10 @@ test('works', t => {
     },
   })
 
-  t.snapshot(styles)
-  t.snapshot(StyleResolver.resolve(styles.root))
+  t.deepEqual(styles, {
+    root: ['dss_h28rbs-i0tgik'],
+  })
+  t.is(StyleResolver.resolve(styles.root), 'dss_h28rbs-i0tgik')
 })
 
 // test('works', t => {
@@ -94,3 +96,22 @@ test('works', t => {
 //
 //   t.is(result.locals.root[1], 'dss_hcs3go-i0tgik')
 // })
+
+test('adds vendor prefixes', t => {
+  const { StyleSheet, StyleResolver } = create()
+  const styles = StyleSheet.create({
+    root: {
+      filter: 'blur(10px)',
+    },
+  })
+
+  t.deepEqual(styles, {
+    root: ['dss_1jgjtkn-1k19bls'],
+  })
+  StyleResolver.resolve(styles.root)
+  const css = cssRulesToString(StyleResolver.getStyleSheet().sheet.cssRules)
+  t.is(
+    css,
+    '.dss_1jgjtkn-1k19bls{-webkit-filter:blur(10px);filter:blur(10px);}'
+  )
+})
