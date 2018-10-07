@@ -6,7 +6,7 @@ import { prefix } from 'inline-style-prefixer'
 
 export function createClassName(property, value, descendants, media) {
   return `dss_${hashFn(property + descendants + media).toString(36)}-${hashFn(
-    value
+    String(value)
   ).toString(36)}`
 }
 

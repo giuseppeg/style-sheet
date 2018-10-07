@@ -65,9 +65,8 @@ function createStyleResolver(sheets, rules) {
           className = result.className
           if (result.shouldInject && !injected[current]) {
             if (serverStyles.indexOf(current) == -1) {
-              ;(current.charAt(0) === '@' ? mediaSheet : sheet).insertRule(
-                rules[current]
-              )
+              const rule = rules[current]
+              ;(rule.charAt(0) === '@' ? mediaSheet : sheet).insertRule(rule)
             }
             injected[current] = true
           }
