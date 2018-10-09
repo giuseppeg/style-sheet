@@ -1,4 +1,3 @@
-require('regenerator-runtime/runtime')
 const test = require('ava')
 const puppeteer = require('puppeteer')
 
