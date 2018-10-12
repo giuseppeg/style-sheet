@@ -1,5 +1,6 @@
 import evaluateSimple from 'babel-helper-evaluate-path'
 import evaluateComplex from 'linaria/lib/babel/evaluate'
+import { parseExpression } from '@babel/parser'
 import { create } from './'
 import { createSheet, cssRulesToString } from './server'
 
@@ -10,6 +11,8 @@ const sheets = {
 
 const { StyleSheet, StyleResolver } = create(sheets)
 
+// This function returns the extracted CSS to save in a .css file.
+// It must be called after all the files are processed by Babel.
 export function getCss() {
   return [
     cssRulesToString(sheets.sheet.cssRules),
@@ -35,6 +38,7 @@ export default function(babel) {
           return
         }
 
+        // Find all the references to StyleSheet.create.
         const binding = path.scope.getBinding(specifier.node.local.name)
 
         if (!binding || !Array.isArray(binding.referencePaths)) {
@@ -54,6 +58,8 @@ export default function(babel) {
 }
 
 function processReferencePath(babel, path, state) {
+  const t = babel.types
+  const cloneNode = t.cloneNode || t.cloneDeep
   // From
   //
   //   StyleSheet.create({
@@ -70,7 +76,7 @@ function processReferencePath(babel, path, state) {
   //     }
   //   }
   const rulesPath = path.get('arguments')[0]
-  let extractable = []
+  const extractableProperties = []
 
   // For each property
   //
@@ -84,20 +90,43 @@ function processReferencePath(babel, path, state) {
       return
     }
     // Try to resolve to static...
+    // evaluate() will also compile static styles, which are the ones
+    // that we will extract to file.
     const evaluated = evaluate(babel, property.get('value'), state)
     if (evaluated.value === null) {
       return
     }
-    extractable.push({
-      path: property,
-      ...evaluated,
-    })
+    const replacement = parseExpression(JSON.stringify(evaluated.value))
+    extractableProperties.push(
+      t.objectProperty(cloneNode(property.get('key').node), replacement)
+    )
+    property.remove()
   })
 
   // If we couldn't resolve anything we exit.
-  if (extractable.length === 0) {
+  if (extractableProperties.length === 0) {
     return
   }
+
+  const extractedStylesObjectLiteral = t.objectExpression(extractableProperties)
+
+  // When some rules could not be extracted (maybe there are dynamic styles)
+  // we will spread StyleSheet.create({...}) to the replacement object
+  //
+  //   ({
+  //    static: [/* ... */],
+  //    ...StyleSheet.create({
+  //      someDynamicRule: {
+  //        color: props.color,
+  //      }
+  //    })
+  //   })
+  if (properties.length !== extractableProperties.length) {
+    extractedStylesObjectLiteral.properties.push(
+      t.spreadElement(cloneNode(path.node))
+    )
+  }
+  path.replaceWith(extractedStylesObjectLiteral)
 }
 
 function compileRule(rule) {

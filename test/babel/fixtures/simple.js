@@ -7,7 +7,7 @@ const rule = {
 }
 const small = true
 
-StyleSheet.create({
+const styles1 = StyleSheet.create({
   root: {
     color: 'red',
     margin,
@@ -16,4 +16,11 @@ StyleSheet.create({
     val: TEST
   },
   foo: rule,
+  notExtractable: props.foo
+})
+
+const styles2 = StyleSheet.create({
+  root: {
+    display: 'flex'
+  },
 })
