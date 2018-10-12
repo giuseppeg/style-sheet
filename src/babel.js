@@ -1,6 +1,5 @@
 import evaluateSimple from 'babel-helper-evaluate-path'
 import evaluateComplex from 'linaria/lib/babel/evaluate'
-import { parseExpression } from '@babel/parser'
 import { create } from './'
 import { createSheet, cssRulesToString } from './server'
 
@@ -96,9 +95,11 @@ function processReferencePath(babel, path, state) {
     if (evaluated.value === null) {
       return
     }
-    const replacement = parseExpression(JSON.stringify(evaluated.value))
     extractableProperties.push(
-      t.objectProperty(cloneNode(property.get('key').node), replacement)
+      t.objectProperty(
+        cloneNode(property.get('key').node),
+        t.arrayExpression(evaluated.value.map(value => t.stringLiteral(value)))
+      )
     )
     property.remove()
   })
