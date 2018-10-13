@@ -1,5 +1,5 @@
 import test from 'ava'
-import { create as _create } from '../src'
+import { create as _create } from '../src/factory'
 import { createSheet, cssRulesToString } from '../src/server'
 
 const create = () =>

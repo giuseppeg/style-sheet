@@ -1,5 +1,5 @@
 import { TEST } from './constants.js'
-import { StyleSheet } from '../../../dist/dev'
+import { StyleSheet } from 'style-sheet'
 
 const margin = 10;
 const rule = {

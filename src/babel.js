@@ -1,6 +1,6 @@
 import evaluateSimple from 'babel-helper-evaluate-path'
 import evaluateComplex from 'linaria/lib/babel/evaluate'
-import { create } from './'
+import { create } from './factory'
 import { createSheet, cssRulesToString } from './server'
 
 const sheets = {
@@ -24,13 +24,15 @@ export default function(babel) {
     name: 'style-sheet/babel',
     visitor: {
       ImportDeclaration(path, state) {
-        // if (path.node.source.value !== './style-sheet') {
-        //   return
-        // }
+        const packageName = state.opts.packageName || 'style-sheet'
+        if (path.node.source.value !== packageName) {
+          return
+        }
+        const importName = state.opts.importName || 'StyleSheet'
         const specifier = path.get('specifiers').find(specifier => {
           return (
             specifier.isImportSpecifier() &&
-            specifier.get('imported').node.name === 'StyleSheet'
+            specifier.get('imported').node.name === importName
           )
         })
         if (!specifier) {
