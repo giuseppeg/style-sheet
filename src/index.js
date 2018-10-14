@@ -37,7 +37,6 @@ const createSheets = () => {
 }
 
 const sheets = createSheets()
-console.log(sheets)
 
 export const { StyleSheet, StyleResolver } = create(sheets)
 export function flushServer() {
