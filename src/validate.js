@@ -1,4 +1,4 @@
-const shortHandProperties = [
+export const shortHandProperties = [
   'animation',
   'background',
   'border',
@@ -31,36 +31,32 @@ const shortHandProperties = [
 ]
 
 function error(message) {
-  throw new Error(
-    `DSS Error
-    ${message}
-    For a comprehensive list of supported features refer to http://giuseppeg.github.io/dss/supported-css-features/
-    `
-  )
+  throw new Error(`style-sheet: ${message}`)
 }
 
-export function validateObj(obj, parentKey = null) {
+export default function validate(obj) {
   for (const k in obj) {
     const key = k.trim()
     const value = obj[key]
     if (value == null) continue
-    validateStr(key, parentKey)
-    if (typeof value === 'object') {
-      parse(value, key)
-    } else if (typeof value === 'string' && value.test(/!\s*important/)) {
+    const isDeclaration = typeof value !== 'object'
+    validateStr(key, isDeclaration)
+    if (!isDeclaration) {
+      validate(value)
+    } else if (typeof value === 'string' && /!\s*important/.test(value)) {
       error('!important is not allowed')
     }
   }
 }
 
-export default function validateStr(key, parentKey) {
-  if (!parentKey || !parentKey.test(/^[@\:&]/)) {
+export function validateStr(key, isDeclaration) {
+  if (isDeclaration) {
     // Value
     if (shortHandProperties.includes(key)) {
       error(
         '`' +
           key +
-          "`: DSS does't support shorthand properties at the moment. This CSS feature will likely be supported in the future. Please expand your shorthand properties for now." +
+          "`: style-sheet does't support shorthand properties at the moment. This CSS feature will likely be supported in the future. Please expand your shorthand properties for now." +
           `\n Can't remember what is the long form for \`${key}\`? Ask Google 👉  https://google.com/search?q=${encodeURIComponent(
             `css ${key} properties`
           )}`
@@ -69,10 +65,14 @@ export default function validateStr(key, parentKey) {
     return
   }
 
+  if (key.charAt(0) === '@') {
+    return
+  }
+
   // Selector
 
   if (key.split(',').length > 1) {
-    error(rule, `Invalid selector: ${key}. Selectors cannot be grouped.`)
+    error(`Invalid nested selector: '${key}'. Selectors cannot be grouped.`)
   }
 
   if (/::?(after|before|first-letter|first-line)/.test(key)) {
@@ -85,21 +85,38 @@ export default function validateStr(key, parentKey) {
     error(`Detected unsupported pseudo-class: '${key}'.`)
   }
 
-  const split = key.split(/\s*[+>~\s]\s*/g)
+  const split = key.split(/\s*[+>~]\s*/g)
 
   switch (split.length) {
     case 2:
-      if (split[0].test(/^[^\:&]/) || split[1].test(/^[^a-zA-Z]/)) {
-        error(`Invalid selector: ${key}.`)
+      if (split[0].charAt(0) !== ':') {
+        error(
+          `Invalid nested selector: '${key}'. ` +
+            'The left part of a combinator selector must be a pseudo-class eg. `:hover`.'
+        )
+      }
+      if (split[1] !== '&') {
+        error(
+          `Invalid nested selector: '${key}'. ` +
+            'The right part of a combinator selector must be `&`.'
+        )
       }
       break
     case 1:
-      if (split[0].test(/^[^a-zA-Z]/)) {
-        error(`Invalid selector: ${key}. Only class selectors are allowed.`)
+      if (split[0].indexOf(' ') > -1) {
+        error(
+          `Invalid nested selector: ${key}. Complex selectors are not supported.`
+        )
+      }
+      if (split[0].charAt(0) !== '&') {
+        error(
+          `Invalid nested selector: '${key}'. ` +
+            'A pseudo-class selector should reference its parent with `&` eg. `&:hover {}`.'
+        )
       }
       break
     default:
-      error(`Invalid selector: ${key}.`)
+      error(`Invalid nested selector: ${key}.`)
   }
 
   if (/\[/.test(key)) {
