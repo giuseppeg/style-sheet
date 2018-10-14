@@ -51,7 +51,6 @@ const parse = (obj, descendants, media, opts) => {
         Object.assign(rules, parsed)
         break
       }
-      case '[object Number]':
       case '[object Array]':
       case '[object String]': {
         const className = createClassName(key, value, descendants, media)

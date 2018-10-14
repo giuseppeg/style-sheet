@@ -1,1 +1,1 @@
-export const TEST = 10
+export const TEST = '10px'
