@@ -38,8 +38,9 @@ export default function validate(obj) {
   for (const k in obj) {
     const key = k.trim()
     const value = obj[key]
-    if (value == null) continue
-    const isDeclaration = typeof value !== 'object'
+    if (value === null) continue
+    const isDeclaration =
+      Object.prototype.toString.call(value) !== '[object Object]'
     validateStr(key, isDeclaration)
     if (!isDeclaration) {
       validate(value)

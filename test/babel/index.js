@@ -1,7 +1,7 @@
-import test from 'ava'
-import plugin from '../../src/babel'
 import path from 'path'
+import test from 'ava'
 import { transformFileSync } from '@babel/core'
+import plugin from '../../src/babel'
 
 const transform = (file, opts = {}) =>
   transformFileSync(path.resolve(__dirname, file), {

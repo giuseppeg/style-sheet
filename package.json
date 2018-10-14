@@ -3,6 +3,11 @@
   "version": "0.1.0-alpha.0",
   "description": "",
   "main": "index.js",
+    "files": [
+    "dist",
+    "index.js",
+    "server.js"
+  ],
   "scripts": {
     "prepublish": "npm run clean && npm run build",
     "clean": "rm -rf dist && rm -rf test/e2e/dist",
@@ -13,7 +18,7 @@
     "ava": "ava",
     "ava:e2e": "ava test/e2e/test.js",
     "test:copy:lib": "npm run clean && npm run build:dev && mkdir -p test/e2e/dist && cp dist/dev/index.js test/e2e/dist/_styleSheet.js && cp dist/dev/factory.js test/e2e/dist/_styleSheetFactory.js",
-    "pretest": "npm run test:copy:lib",
+    "pretest": "xo && npm run test:copy:lib",
     "test": "run-p --race test:e2e:server ava",
     "test:unit": "ava test/*.js",
     "pretest:e2e": "npm run test:copy:lib",
@@ -23,7 +28,15 @@
     "lint": "xo",
     "format": "prettier --single-quote --trailing-comma=es5 --no-semi --write all *.js {src,test}/*.js {src,test}/**/*.js"
   },
-  "keywords": [],
+  "keywords": [
+    "css-in-js",
+    "css in js",
+    "stylesheet",
+    "css",
+    "react native styles",
+    "babel-plugin",
+    "atomic css"
+  ],
   "author": "Giuseppe Gurgone",
   "license": "MIT",
   "dependencies": {
@@ -36,6 +49,7 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
     "ava": "^1.0.0-beta.8",
+    "eslint-config-prettier": "^3.1.0",
     "fnv1a": "^1.0.1",
     "inline-style-prefixer": "^5.0.1",
     "linaria": "https://github.com/callstack/linaria#fcec1bbca0125a1fa3c16316aa815cd6e29fff70",
@@ -55,9 +69,19 @@
       "./test/_register.js"
     ]
   },
-  "files": [
-    "dist",
-    "index.js",
-    "server.js"
-  ]
+  "xo": {
+    "envs": [
+      "node",
+      "browser"
+    ],
+    "extends": "prettier",
+    "ignore": [
+      "test/babel/fixtures/*",
+      "test/e2e/_helpers.js"
+    ],
+    "rules": {
+      "guard-for-in": 0,
+      "unicorn/import-index": 0
+    }
+  }
 }

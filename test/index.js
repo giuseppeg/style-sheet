@@ -27,7 +27,7 @@ test('works', t => {
 })
 
 test('works with multiple rules', t => {
-  const { StyleSheet, StyleResolver } = create()
+  const { StyleSheet } = create()
   const result = StyleSheet.create({
     root: {
       color: 'red',
@@ -66,10 +66,10 @@ test('resolves &', t => {
   t.snapshot(getCss(StyleResolver))
 })
 
-// hashing
+// Hashing
 
 test('hashes selectors deterministically', t => {
-  const { StyleSheet, StyleResolver } = create()
+  const { StyleSheet } = create()
   const result = StyleSheet.create({
     root: {
       color: 'red',
@@ -86,13 +86,14 @@ test('hashes media queries and descendant selectors', t => {
       '@media (min-width: 30px)': {
         color: 'red',
       },
-      ':hover': {
+      '&:hover': {
         color: 'red',
       },
     },
   })
-
-  t.is(result.root[1], 'dss_hcs3go-i0tgik')
+  StyleResolver.resolve(result.root)
+  t.snapshot(getCss(StyleResolver))
+  t.is(result.root[1], 'dss_41vss2-i0tgik')
 })
 
 test('supports fallback values', t => {

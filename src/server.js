@@ -19,6 +19,7 @@ export function createSheet() {
 export function cssRulesToString(rules) {
   return Array.prototype.reduce.call(
     rules,
+    // eslint-disable-next-line prefer-arrow-callback
     function(css, rule) {
       return css + rule.cssText
     },

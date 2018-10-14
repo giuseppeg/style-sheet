@@ -1,7 +1,5 @@
-const test = require('ava')
 const puppeteer = require('puppeteer')
 
-global.test = test
 global.debug = false
 
 global.testBefore = async () => {

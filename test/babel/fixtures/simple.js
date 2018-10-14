@@ -1,7 +1,7 @@
-import { TEST } from './constants.js'
 import { StyleSheet } from 'style-sheet'
+import { TEST } from './constants'
 
-const margin = 10;
+const marginTop = 10;
 const rule = {
   display: 'block'
 }
@@ -10,9 +10,9 @@ const small = true
 const styles1 = StyleSheet.create({
   root: {
     color: 'red',
-    margin,
-    padding: margin / 2,
-    fontSize: small ? margin : 4,
+    marginTop,
+    paddingTop: marginTop / 2,
+    fontSize: small ? marginTop : 4,
     val: TEST
   },
   foo: rule,

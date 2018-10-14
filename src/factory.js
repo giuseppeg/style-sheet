@@ -57,14 +57,14 @@ function createStyleResolver(sheets, rules) {
         if (!current) {
           continue
         }
-        if (typeof current == 'string') {
+        if (typeof current === 'string') {
           current = [current]
         }
         current.forEach(current => {
           const result = concatClassName(className, current)
           className = result.className
           if (result.shouldInject && !injected[current]) {
-            if (serverStyles.indexOf(current) == -1) {
+            if (serverStyles.indexOf(current) === -1) {
               const rule = rules[current]
               ;(rule.charAt(0) === '@' ? mediaSheet : sheet).insertRule(rule)
             }

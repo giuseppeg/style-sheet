@@ -94,6 +94,7 @@ function processReferencePath(babel, path, state) {
     // evaluate() will also compile static styles, which are the ones
     // that we will extract to file.
     const evaluated = evaluate(babel, property.get('value'), state)
+
     if (evaluated.value === null) {
       return
     }
@@ -168,10 +169,11 @@ function evaluate(babel, path, state) {
         })
       }
     )
+
     if (result.value !== null) {
       result.value = compileRule(result.value)
     }
-  } catch (e) {
+  } catch (error) {
     result = { value: null, dependencies: [] }
   }
 

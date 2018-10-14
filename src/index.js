@@ -4,9 +4,9 @@ import { createSheet as createServerSheet, flush } from './server'
 const isBrowser = typeof window !== 'undefined'
 
 const createSheets = () => {
-  let style,
-    mediaStyle,
-    linkStyle = null
+  let style
+  let mediaStyle
+  let linkStyle = null
 
   if (isBrowser) {
     style = document.querySelector('#__style_sheet__')

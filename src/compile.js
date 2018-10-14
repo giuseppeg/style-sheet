@@ -13,6 +13,7 @@ export function createClassName(property, value, descendants, media) {
 const hyphenate = s => s.replace(/[A-Z]|^ms/g, '-$&').toLowerCase()
 const strigifyDeclaration = dec => {
   let stringified = ''
+
   for (const prop in dec) {
     const value = dec[prop]
     if (Array.isArray(value)) {
@@ -42,23 +43,28 @@ const parse = (obj, descendants, media, opts) => {
     const value = obj[key]
     if (value === null || value === undefined) continue
     switch (Object.prototype.toString.call(value)) {
-      case '[object Object]':
+      case '[object Object]': {
         const parsed =
           key.charAt(0) === '@'
             ? parse(value, descendants, key, opts)
             : parse(value, descendants + key, media, opts)
         Object.assign(rules, parsed)
-        continue
+        break
+      }
       case '[object Number]':
       case '[object Array]':
-      case '[object String]':
+      case '[object String]': {
         const className = createClassName(key, value, descendants, media)
         if (rules[className]) {
-          return
+          break
         }
         const declaration = prefix({ [key]: value })
         const rule = createRule(className, declaration, descendants, media)
         rules[className] = rule
+        break
+      }
+      default:
+        break
     }
   }
 

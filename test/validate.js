@@ -142,3 +142,11 @@ test('nested: throws with invalid nested inside of media queries', t => {
     })
   }, /right part of a combinator selector must be `&`/)
 })
+
+test('works with array values', t => {
+  t.notThrows(() => {
+    validate({
+      color: ['red', 'rgba(255, 0, 0, 1)'],
+    })
+  })
+})

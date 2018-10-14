@@ -1,3 +1,6 @@
+/* global testBefore testAfter styleSheet */
+const test = require('ava')
+// eslint-disable-next-line import/no-unassigned-import
 require('./_setup')
 
 test('minimal testcase', async t => {
