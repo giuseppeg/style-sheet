@@ -39,6 +39,32 @@ console.log(`<div class="${className)}"></div>`)
 
 `StyleResolver.resolve` can accept a single rule or an array of rules and it will merge them deterministically in application order (left to right). Finally it inserts the computed styles into the page.
 
+### Pseudo classes, media queries and other features
+
+`style-sheet` supports simple state selectors, media queries and shallow combinator selectors like:
+
+```js
+const styles = StyleSheet.create({
+  root: {
+    color: 'red',
+    '&:hover' { // state selector
+      color: 'green'
+    },
+    ':focus > &': { // shallow combinator selector
+      color: 'green'
+    },
+    ':focus + &': { // shallow combinator selector
+      color: 'blue'
+    },
+    '@media (min-width: 678px)': { // media query
+      color: 'yellow'
+    }
+  },
+})
+```
+
+When possible though we suggest to define separate rules and apply (resolve) them conditionally.
+
 ## Server side rendering
 
 The library exports a `flushServer` function that can be used for server side rendering.
@@ -115,7 +141,7 @@ const html = `
 
 Note that `style-sheet` **can also reconcile extracted styles!!!** You just need to make sure that the `link` tag has the `__style_sheet_extracted__` set.
 
-When the Babel plugin can't resolve styles to static it flags them as dynamic and it leaves them in JavaScript.
+When the Babel plugin can't resolve styles to static it flags them as dynamic and it leaves them in JavaScript. For this reason it is always a good idea to define dynamic styles in separate rules.
 
 ### Configuration
 

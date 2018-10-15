@@ -17,7 +17,6 @@ const plugins = () => [
     exclude: 'node_modules/**',
   }),
   resolve({
-    main: true,
     browser: true,
   }),
   commonjs(),
@@ -41,5 +40,19 @@ export default [
       name: 'styleSheet',
     },
     plugins: plugins(),
+  },
+  {
+    input: './src/babel.js',
+    output: {
+      file: './dist/babel.js',
+      format: 'cjs',
+    },
+    plugins: [
+      resolve({
+        browser: false,
+      }),
+      commonjs(),
+    ],
+    external: ['linaria/lib/babel/evaluate', 'babel-helper-evaluate-path'],
   },
 ]

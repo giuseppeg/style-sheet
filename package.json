@@ -5,6 +5,8 @@
   "main": "index.js",
   "files": [
     "dist",
+    "babel.js",
+    "factory.js",
     "index.js",
     "server.js"
   ],

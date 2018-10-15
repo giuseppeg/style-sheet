@@ -1,5 +1,6 @@
 import test from 'ava'
-import validate, { shortHandProperties } from '../src/validate'
+import validate from '../src/validate'
+import { shortHandProperties } from '../src/data'
 
 test('simple object pass validation', t => {
   t.notThrows(() => {

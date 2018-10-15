@@ -3,6 +3,7 @@
 
 import hashFn from 'fnv1a'
 import { prefix } from 'inline-style-prefixer'
+import { unitless } from './data'
 
 export function createClassName(property, value, descendants, media) {
   return `dss_${hashFn(property + descendants + media).toString(36)}-${hashFn(
@@ -40,7 +41,7 @@ const parse = (obj, descendants, media, opts) => {
   const rules = {}
 
   for (const key in obj) {
-    const value = obj[key]
+    let value = obj[key]
     if (value === null || value === undefined) continue
     switch (Object.prototype.toString.call(value)) {
       case '[object Object]': {
@@ -51,19 +52,30 @@ const parse = (obj, descendants, media, opts) => {
         Object.assign(rules, parsed)
         break
       }
-      case '[object Array]':
-      case '[object String]': {
+      default: {
         const className = createClassName(key, value, descendants, media)
         if (rules[className]) {
           break
+        }
+        if (!unitless[key]) {
+          if (typeof value === 'number') {
+            if (value !== 0) {
+              value += 'px'
+            }
+          } else if (Array.isArray(value)) {
+            value = value.map(v => {
+              if (typeof v === 'number' && value !== 0) {
+                return v + 'px'
+              }
+              return v
+            })
+          }
         }
         const declaration = prefix({ [key]: value })
         const rule = createRule(className, declaration, descendants, media)
         rules[className] = rule
         break
       }
-      default:
-        break
     }
   }
 

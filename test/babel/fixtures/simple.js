@@ -11,9 +11,10 @@ const small = true
 const styles1 = StyleSheet.create({
   root: {
     color: 'red',
-    marginTop: marginTop + 'px',
-    paddingTop: marginTop / 2 + 'px',
-    fontSize: (small ? marginTop : 4) + 'px',
+    marginTop: marginTop,
+    marginBottom: marginTop + 'px',
+    paddingTop: marginTop / 2,
+    fontSize: (small ? marginTop : 4),
     val: TEST,
     backgroundColor,
     filter: 'blur(10px)'

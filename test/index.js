@@ -66,6 +66,22 @@ test('resolves &', t => {
   t.snapshot(getCss(StyleResolver))
 })
 
+test('resolves non unitless numbers', t => {
+  const { StyleSheet, StyleResolver } = create()
+  const result = StyleSheet.create({
+    root: {
+      marginTop: 10,
+      marginBottom: '20px',
+      paddingTop: 0,
+      paddingBottom: [5, 30],
+      zIndex: 10,
+    },
+  })
+
+  StyleResolver.resolve(result.root)
+  t.snapshot(getCss(StyleResolver))
+})
+
 // Hashing
 
 test('hashes selectors deterministically', t => {
