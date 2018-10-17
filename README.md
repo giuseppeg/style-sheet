@@ -4,7 +4,7 @@
 [![XO code style](https://img.shields.io/badge/code_style-XO-5ed9c7.svg)](https://github.com/sindresorhus/xo)
 [![styled with prettier](https://img.shields.io/badge/styled_with-prettier-ff69b4.svg)](https://github.com/prettier/prettier)
 
-Ultrafast CSS in JS library with support for static CSS extraction.
+Fast CSS in JS library with support for static CSS extraction.
 
 With a React Native like API, compiles rules to atomic CSS classes for fast performance even at runtime! While the API is inspired to the React Native one the library can be used with any framework or vanilla js.
 
@@ -96,6 +96,8 @@ const html = `
 ```
 
 ## Extracting to static
+
+(experimental)
 
 `style-sheet` comes with a Babel plugin that can extract static CSS. This means that your styles are not computed at runtime or in JavaScript and can be served via `link` tag.
 

@@ -1,7 +1,7 @@
 {
   "name": "style-sheet",
   "version": "3.0.0-alpha.0",
-  "description": "",
+  "description": "Fast CSS in JS library with support for static CSS extraction.",
   "main": "index.js",
   "files": [
     "dist",
@@ -43,7 +43,7 @@
   "license": "MIT",
   "dependencies": {
     "babel-helper-evaluate-path": "^0.5.0",
-    "linaria": "https://github.com/callstack/linaria#f526542ccd19917b4b65aee0b3ef3d73e5dd6ee4"
+    "linaria": "^1.0.0-alpha.12"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",

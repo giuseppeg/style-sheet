@@ -64,7 +64,7 @@ const parse = (obj, descendants, media, opts) => {
             }
           } else if (Array.isArray(value)) {
             value = value.map(v => {
-              if (typeof v === 'number' && value !== 0) {
+              if (typeof v === 'number' && v !== 0) {
                 return v + 'px'
               }
               return v

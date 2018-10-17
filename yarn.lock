@@ -618,8 +618,8 @@
   resolved "https://registry.yarnpkg.com/@types/estree/-/estree-0.0.39.tgz#e177e699ee1b8c22d23174caaa7422644389509f"
 
 "@types/node@*":
-  version "10.11.7"
-  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.11.7.tgz#0e75ca9357d646ca754016ca1d68a127ad7e7300"
+  version "10.12.0"
+  resolved "https://registry.yarnpkg.com/@types/node/-/node-10.12.0.tgz#ea6dcbddbc5b584c83f06c60e82736d8fbb0c235"
 
 "@zeit/schemas@2.6.0":
   version "2.6.0"
@@ -1065,8 +1065,8 @@ camelcase@^4.0.0, camelcase@^4.1.0:
   resolved "https://registry.yarnpkg.com/camelcase/-/camelcase-4.1.0.tgz#d545635be1e33c542649c69173e5de6acfae34dd"
 
 caniuse-lite@^1.0.30000890:
-  version "1.0.30000890"
-  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000890.tgz#86a18ffcc65d79ec6a437e985761b8bf1c4efeaf"
+  version "1.0.30000892"
+  resolved "https://registry.yarnpkg.com/caniuse-lite/-/caniuse-lite-1.0.30000892.tgz#344d2b51ee3ff5977537da4aa449c90eec40b759"
 
 capture-stack-trace@^1.0.0:
   version "1.0.1"
@@ -2924,18 +2924,21 @@ levn@^0.3.0, levn@~0.3.0:
     prelude-ls "~1.1.2"
     type-check "~0.3.2"
 
-"linaria@https://github.com/callstack/linaria#f526542ccd19917b4b65aee0b3ef3d73e5dd6ee4":
-  version "1.0.0"
-  resolved "https://github.com/callstack/linaria#f526542ccd19917b4b65aee0b3ef3d73e5dd6ee4"
+linaria@^1.0.0-alpha.12:
+  version "1.0.0-alpha.12"
+  resolved "https://registry.yarnpkg.com/linaria/-/linaria-1.0.0-alpha.12.tgz#0add7f113798639ef3e09ec54fb0f2b27c77b706"
   dependencies:
     "@babel/core" "^7.0.1"
     "@babel/generator" "^7.0.0"
     "@babel/plugin-proposal-export-namespace-from" "^7.0.0"
     "@babel/plugin-syntax-dynamic-import" "^7.0.0"
+    "@babel/plugin-transform-modules-commonjs" "^7.1.0"
     "@babel/register" "^7.0.0"
     loader-utils "^1.1.0"
+    mkdirp "^0.5.1"
     postcss "^7.0.2"
     react-is "^16.5.1"
+    rollup-pluginutils "^2.3.3"
     source-map "^0.7.3"
     stylis "^3.5.3"
 
@@ -3837,8 +3840,8 @@ process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.0.tgz#a37d732f4271b4ab1ad070d35508e8290788ffaa"
 
 progress@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.0.tgz#8a1be366bf8fc23db2bd23f10c6fe920b4389d1f"
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/progress/-/progress-2.0.1.tgz#c9242169342b1c29d275889c95734621b1952e31"
 
 proto-props@^1.1.0:
   version "1.1.0"
@@ -4759,8 +4762,8 @@ wide-align@^1.1.0:
     string-width "^1.0.2 || 2"
 
 widest-line@^2.0.0:
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/widest-line/-/widest-line-2.0.0.tgz#0142a4e8a243f8882c0233aa0e0281aa76152273"
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/widest-line/-/widest-line-2.0.1.tgz#7438764730ec7ef4381ce4df82fb98a53142a3fc"
   dependencies:
     string-width "^2.1.1"
 
