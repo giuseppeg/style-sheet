@@ -3,8 +3,15 @@ import validate from './validate'
 import { fromServer } from './server'
 
 function createStyleSheet(rules) {
+  const cache = typeof Map !== 'undefined' ? new Map() : null
   return {
     create: styles => {
+      if (cache) {
+        const cached = cache.get(styles)
+        if (cached) {
+          return cached
+        }
+      }
       const locals = {}
 
       for (const token in styles) {
@@ -15,6 +22,10 @@ function createStyleSheet(rules) {
         const compiled = compile(rule)
         locals[token] = Object.keys(compiled)
         Object.assign(rules, compiled)
+      }
+
+      if (cache) {
+        cache.set(styles, locals)
       }
 
       return locals
@@ -44,7 +55,7 @@ function createStyleResolver(sheets, rules) {
       return sheets
     },
     resolve(style) {
-      const stylesToString = String(style)
+      const stylesToString = style.join()
 
       if (resolved[stylesToString]) {
         return resolved[stylesToString]
