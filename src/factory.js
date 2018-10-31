@@ -3,7 +3,7 @@ import validate from './validate'
 import { fromServer } from './server'
 
 function createStyleSheet(rules) {
-  const cache = typeof Map !== 'undefined' ? new Map() : null
+  const cache = typeof Map === 'undefined' ? null : new Map()
   return {
     create: styles => {
       if (cache) {
@@ -75,8 +75,8 @@ function createStyleResolver(sheets, rules) {
           const result = concatClassName(className, current)
           className = result.className
           if (result.shouldInject && !injected[current]) {
-            if (serverStyles.indexOf(current) === -1) {
-              const rule = rules[current]
+            const rule = rules[current]
+            if (rule && serverStyles.indexOf(current) === -1) {
               ;(rule.charAt(0) === '@' ? mediaSheet : sheet).insertRule(rule)
             }
             injected[current] = true
