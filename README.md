@@ -74,9 +74,9 @@ When called, `flushServer` returns an array with two objects. Each object contai
 The reason why `flushServer` returns two objects is that `style-sheet` creates a separate stylesheet for media queries which should be rendereded after regular rules to preserve specificity.
 
 ```js
-import { fromServer } from 'style-sheet'
+import { flushServer } from 'style-sheet'
 
-const styleTags = fromServer().map(style => {
+const styleTags = flushServer().map(style => {
   return `<style id="${style.id}">${style.css}</style>`
 }).join('\n')
 
