@@ -174,6 +174,83 @@ This library comes with a factory that is available at `style-sheet/factory` and
 
 More documentation to come, please refer at the implementation in `src/factory.js`.
 
+## Using style-sheet with React
+
+style-sheet is framework agnostic but it works well with React.
+
+```jsx
+import React from 'react'
+import { StyleSheet, StyleResolver } from 'style-sheet'
+
+export default ({ children }) => {
+  const className = StyleResolver.resolve([styles.root, styles.another])
+  return (
+    <div className={className}>{children}</div>
+  )
+}
+
+const styles = StyleSheet.create({
+  root: {
+    display: 'block',
+    color: 'red',
+  },
+  another: {
+    marginTop: 10,
+    color: 'green'
+  }
+})
+```
+
+### The `css` prop
+
+(experimental)
+
+style-sheet provides a custom `createElement` function that adds support for a `css` prop to React. This prop allows you to define "inline styles" that get compiled to real CSS and removed from the element. These are also vendor prefixed and scoped.
+
+To use this feature you need to `import { createElement } from 'style-sheet'` and instructing Babel to use this method instead of the default `React.createElement`. This can be done in two ways:
+
+* Adding the `/* @jsx createElement */` at the top of every file
+
+```jsx
+/* @jsx createElement */
+
+import React from 'react'
+import { StyleSheet, StyleResolver, createElement } from 'style-sheet'
+
+export default ({ children }) => (
+  <div css={{ color: 'red'}}>{children}</div>
+)
+```
+
+* In your Babel configuration
+
+```json
+{
+  "plugins": [
+    ["@babel/plugin-transform-react-jsx", {
+      "pragma": "createElement", // React will use style-sheet's createElement
+    }]
+  ]
+}
+```
+
+or if you use `@babel/preset-react`
+
+```json
+{
+  "presets": [
+    [
+      "@babel/preset-react",
+      {
+        "pragma": "createElement", // React will use style-sheet's createElement
+      }
+    ]
+  ]
+}
+```
+
+Note that currently the `css` props works only at runtime and styles defined with it cannot be extracted to static. We are going to add extraction soon though, it is just a matter of (free) time!
+
 ## Contributing
 
 Since this is a side project and we don't want to burn out, we decided to disable the GitHub issues.
