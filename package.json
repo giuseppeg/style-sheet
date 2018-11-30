@@ -84,6 +84,7 @@
       "guard-for-in": 0,
       "unicorn/import-index": 0,
       "unicorn/filename-case": 0,
+      "unicorn/prefer-type-error": 0,
       "capitalized-comments": 0
     }
   }
