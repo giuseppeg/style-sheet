@@ -207,6 +207,8 @@ const styles = StyleSheet.create({
 
 style-sheet provides a custom `createElement` function that adds support for a `css` prop to React. This prop allows you to define "inline styles" that get compiled to real CSS and removed from the element. These are also vendor prefixed and scoped.
 
+Note that `className` takes always precedence over the `css` prop when merging the styles. This allows parent components to pass styles such as overrides to children.
+
 To use this feature you need to `import { createElement } from 'style-sheet'` and instructing Babel to use this method instead of the default `React.createElement`. This can be done in two ways:
 
 * Adding the `/* @jsx createElement */` at the top of every file
@@ -218,13 +220,13 @@ import React from 'react'
 import { StyleSheet, StyleResolver, createElement } from 'style-sheet'
 
 export default ({ children }) => (
-  <div css={{ color: 'red'}}>{children}</div>
+  <div css={{ color: 'red' }}>{children}</div>
 )
 ```
 
 * In your Babel configuration
 
-```json
+```js
 {
   "plugins": [
     ["@babel/plugin-transform-react-jsx", {
@@ -236,7 +238,7 @@ export default ({ children }) => (
 
 or if you use `@babel/preset-react`
 
-```json
+```js
 {
   "presets": [
     [
