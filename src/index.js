@@ -41,6 +41,7 @@ const sheets = createSheets()
 
 export const { StyleSheet, StyleResolver } = create(sheets)
 export function flushServer() {
+  const sheets = StyleResolver.getStyleSheet()
   return [
     { id: '__style_sheet__', css: flush(sheets.sheet) },
     { id: '__style_sheet_media__', css: flush(sheets.mediaSheet) },

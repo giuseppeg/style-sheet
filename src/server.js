@@ -1,19 +1,20 @@
-export function createSheet() {
-  const cssRules = { length: 0 }
-  return {
-    insertRule(rule, index = cssRules.length) {
-      if (index > cssRules.length) {
-        throw new Error('IndexSizeError')
-      }
-      cssRules[index] = { cssText: rule }
-      const insertedIndex = index
-      if (index === cssRules.length) {
-        cssRules.length++
-      }
-      return insertedIndex
-    },
-    cssRules,
+function Sheet() {
+  this.cssRules = { length: 0 }
+  this.insertRule = (rule, index = this.cssRules.length) => {
+    if (index > this.cssRules.length) {
+      throw new Error('IndexSizeError')
+    }
+    this.cssRules[index] = { cssText: rule }
+    const insertedIndex = index
+    if (index === this.cssRules.length) {
+      this.cssRules.length++
+    }
+    return insertedIndex
   }
+}
+
+export function createSheet() {
+  return new Sheet()
 }
 
 export function cssRulesToString(rules) {
@@ -28,6 +29,9 @@ export function cssRulesToString(rules) {
 }
 
 export function flush(sheet) {
+  if (typeof window !== 'undefined') {
+    throw new Error('This method is only avaliable server side.')
+  }
   const css = cssRulesToString(sheet.cssRules)
   sheet.cssRules = { length: 0 }
   return css

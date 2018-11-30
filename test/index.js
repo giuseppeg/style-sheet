@@ -1,6 +1,6 @@
 import test from 'ava'
 import { create as _create } from '../src/factory'
-import { createSheet, cssRulesToString } from '../src/server'
+import { createSheet, cssRulesToString, flush } from '../src/server'
 
 const create = () =>
   _create({
@@ -141,4 +141,33 @@ test('adds vendor prefixes', t => {
     css,
     '.dss_1jgjtkn-1k19bls{-webkit-filter:blur(10px);filter:blur(10px);}'
   )
+})
+
+test('flush multiple times', t => {
+  const { StyleSheet, StyleResolver } = create()
+  let styles = StyleSheet.create({
+    root: {
+      color: 'red',
+    },
+  })
+  StyleResolver.resolve(styles.root)
+  let { sheet } = StyleResolver.getStyleSheet()
+  t.is(sheet.cssRules.length, 1)
+  let result = flush(sheet)
+  t.is(sheet.cssRules.length, 0)
+  t.is(StyleResolver.getStyleSheet().sheet.cssRules.length, 0)
+  t.is(result, '.dss_h28rbs-i0tgik{color:red;}')
+
+  styles = StyleSheet.create({
+    root: {
+      color: 'red',
+    },
+  })
+  StyleResolver.resolve(styles.root)
+  sheet = StyleResolver.getStyleSheet().sheet
+  t.is(sheet.cssRules.length, 1)
+  result = flush(sheet)
+  t.is(sheet.cssRules.length, 0)
+  t.is(StyleResolver.getStyleSheet().sheet.cssRules.length, 0)
+  t.is(result, '.dss_h28rbs-i0tgik{color:red;}')
 })

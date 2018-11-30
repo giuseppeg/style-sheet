@@ -47,11 +47,16 @@ function concatClassName(dest, className) {
 function createStyleResolver(sheets, rules) {
   const { sheet, mediaSheet } = sheets
   const serverStyles = fromServer(sheets)
-  const resolved = {}
-  const injected = {}
+  let resolved = {}
+  let injected = {}
 
   return {
     getStyleSheet() {
+      // On the server we reset the caches.
+      if (typeof window === 'undefined') {
+        resolved = {}
+        injected = {}
+      }
       return sheets
     },
     resolve(style) {
