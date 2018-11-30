@@ -12,7 +12,9 @@ export function createCreateElement({ StyleSheet, StyleResolver }) {
         rules.push(StyleSheet.create({ rule: css }).rule)
       }
       if (className) {
-        rules.unshift(
+        // className takes precedence over the css prop
+        // this allows parent components to style the current one.
+        rules.push(
           className.indexOf('dss_') === -1 ? [className] : className.split(' ')
         )
       }
