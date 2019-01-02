@@ -75,3 +75,36 @@ export const shortHandProperties = [
   'text-decoration',
   'transition',
 ]
+
+export const i18n = {
+  properties: {
+    borderTopLeftRadius: 'borderTopRightRadius',
+    borderTopRightRadius: 'borderTopLeftRadius',
+    borderBottomLeftRadius: 'borderBottomRightRadius',
+    borderBottomRightRadius: 'borderBottomLeftRadius',
+    borderLeftColor: 'borderRightColor',
+    borderLeftStyle: 'borderRightStyle',
+    borderLeftWidth: 'borderRightWidth',
+    borderRightColor: 'borderLeftColor',
+    borderRightStyle: 'borderLeftStyle',
+    borderRightWidth: 'borderLeftWidth',
+    left: 'right',
+    marginLeft: 'marginRight',
+    marginRight: 'marginLeft',
+    paddingLeft: 'paddingRight',
+    paddingRight: 'paddingLeft',
+    right: 'left',
+  },
+  values: {
+    ltr: 'rtl',
+    rtl: 'ltr',
+    left: 'right',
+    right: 'left',
+    wResize: 'eResize',
+    eResize: 'wResize',
+    swResize: 'seResize',
+    seResize: 'swResize',
+    nwResize: 'neResize',
+    neResize: 'nwResize',
+  },
+}

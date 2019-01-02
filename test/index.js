@@ -1,16 +1,15 @@
 import test from 'ava'
 import { create as _create } from '../src/factory'
-import { createSheet, cssRulesToString, flush } from '../src/server'
+import { createSheet, flush } from '../src/server'
+import { resolverToString } from './_utils'
 
 const create = () =>
   _create({
-    sheet: createSheet(),
-    mediaSheet: createSheet(),
+    sheets: {
+      sheet: createSheet(),
+      mediaSheet: createSheet(),
+    },
   })
-
-const getCss = resolver =>
-  cssRulesToString(resolver.getStyleSheet().sheet.cssRules) +
-  cssRulesToString(resolver.getStyleSheet().mediaSheet.cssRules)
 
 test('works', t => {
   const { StyleSheet, StyleResolver } = create()
@@ -63,7 +62,7 @@ test('resolves &', t => {
   })
   t.snapshot(result.root)
   StyleResolver.resolve(result.root)
-  t.snapshot(getCss(StyleResolver))
+  t.snapshot(resolverToString(StyleResolver))
 })
 
 test('resolves non unitless numbers', t => {
@@ -79,7 +78,7 @@ test('resolves non unitless numbers', t => {
   })
 
   StyleResolver.resolve(result.root)
-  t.snapshot(getCss(StyleResolver))
+  t.snapshot(resolverToString(StyleResolver))
 })
 
 // Hashing
@@ -108,7 +107,7 @@ test('hashes media queries and descendant selectors', t => {
     },
   })
   StyleResolver.resolve(result.root)
-  t.snapshot(getCss(StyleResolver))
+  t.snapshot(resolverToString(StyleResolver))
   t.is(result.root[1], 'dss_41vss2-i0tgik')
 })
 
@@ -121,7 +120,7 @@ test('supports fallback values', t => {
   })
   t.deepEqual(styles.root, ['dss_h28rbs-aulp3c'])
   StyleResolver.resolve(styles.root)
-  t.snapshot(getCss(StyleResolver))
+  t.snapshot(resolverToString(StyleResolver))
 })
 
 test('adds vendor prefixes', t => {
@@ -136,7 +135,7 @@ test('adds vendor prefixes', t => {
     root: ['dss_1jgjtkn-1k19bls'],
   })
   StyleResolver.resolve(styles.root)
-  const css = getCss(StyleResolver)
+  const css = resolverToString(StyleResolver)
   t.is(
     css,
     '.dss_1jgjtkn-1k19bls{-webkit-filter:blur(10px);filter:blur(10px);}'

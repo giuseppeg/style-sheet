@@ -5,8 +5,11 @@ global.debug = false
 global.testBefore = async () => {
   const browser = await puppeteer.launch({ headless: !global.debug })
   const page = await browser.newPage()
-  const gotoPage = async fileName => {
+  const gotoPage = async (fileName, { onLoad } = {}) => {
     await page.goto('http://localhost:5000/' + fileName, { waitUntil: 'load' })
+    if (onLoad) {
+      await onLoad()
+    }
     await page.addScriptTag({ url: 'http://localhost:5000/_helpers.js' })
     await page.addScriptTag({
       url: 'http://localhost:5000/dist/_styleSheet.js',

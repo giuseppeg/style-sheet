@@ -8,7 +8,7 @@ const sheets = {
   mediaSheet: createSheet(),
 }
 
-const { StyleSheet, StyleResolver } = create(sheets)
+const { StyleSheet, StyleResolver } = create({ sheets })
 
 // This function returns the extracted CSS to save in a .css file.
 // It must be called after all the files are processed by Babel.
