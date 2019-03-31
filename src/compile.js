@@ -3,7 +3,7 @@
 
 import hashFn from 'fnv1a'
 import { prefix } from 'inline-style-prefixer'
-import { unitless } from './data'
+import { unitless, i18n } from './data'
 
 export function createClassName(property, value, descendants, media) {
   return `dss_${hashFn(property + descendants + media).toString(36)}-${hashFn(
@@ -37,10 +37,33 @@ export function createRule(className, declaration, descendants, media) {
   return media + '{' + rule + '}'
 }
 
+function normalizeValue(value) {
+  if (typeof value === 'number') {
+    if (value !== 0) {
+      return value + 'px'
+    }
+  } else if (Array.isArray(value)) {
+    return value.map(v => {
+      if (typeof v === 'number' && v !== 0) {
+        return v + 'px'
+      }
+      return v
+    })
+  }
+
+  return value
+}
+
+function toI18n(lookup, thing) {
+  return Object.prototype.hasOwnProperty.call(lookup, thing)
+    ? lookup[thing]
+    : null
+}
+
 const parse = (obj, descendants, media, opts) => {
   const rules = {}
 
-  for (const key in obj) {
+  for (let key in obj) {
     let value = obj[key]
     if (value === null || value === undefined) continue
     switch (Object.prototype.toString.call(value)) {
@@ -53,26 +76,44 @@ const parse = (obj, descendants, media, opts) => {
         break
       }
       default: {
-        const className = createClassName(key, value, descendants, media)
+        let className = createClassName(key, value, descendants, media)
         if (rules[className]) {
           break
         }
         if (!unitless[key]) {
-          if (typeof value === 'number') {
-            if (value !== 0) {
-              value += 'px'
-            }
-          } else if (Array.isArray(value)) {
-            value = value.map(v => {
-              if (typeof v === 'number' && v !== 0) {
-                return v + 'px'
-              }
-              return v
-            })
-          }
+          value = normalizeValue(value)
         }
         const declaration = prefix({ [key]: value })
-        const rule = createRule(className, declaration, descendants, media)
+        let rule = createRule(className, declaration, descendants, media)
+
+        if (opts.i18n) {
+          const originalProp = key
+          const originalValue = value
+          key = toI18n(i18n.properties, originalProp)
+          value = toI18n(i18n.values, originalValue)
+          if (key !== null || value !== null) {
+            key = key || originalProp
+            value = value || originalValue
+            const i18nClassName = createClassName(
+              key,
+              value,
+              descendants,
+              media
+            )
+            // i18n classNames contain both the ltr and rtl version
+            // this is resolved at runtime by the StyleResolver
+            className = `${className}|${i18nClassName}`
+
+            const declaration = prefix({ [key]: value })
+            // i18n rule is an array with two rules the ltr and the rtl one
+            // eg. ['.left { margin-left: 10px }', '.right { margin-right: 10px }']
+            // At runtime the StyleResolver will pick the correct one.
+            rule = [
+              rule,
+              createRule(i18nClassName, declaration, descendants, media),
+            ]
+          }
+        }
         rules[className] = rule
         break
       }
@@ -82,9 +123,9 @@ const parse = (obj, descendants, media, opts) => {
   return rules
 }
 
-export default obj => {
+export default (obj, opts) => {
   if (!obj) {
     throw new Error('DSS parser invoked without a mandatory styles object.')
   }
-  return parse(obj, '', '')
+  return parse(obj, '', '', opts)
 }

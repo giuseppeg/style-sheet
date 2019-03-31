@@ -38,8 +38,7 @@ const createSheets = () => {
 }
 
 const sheets = createSheets()
-
-export const { StyleSheet, StyleResolver } = create(sheets)
+export const { StyleSheet, StyleResolver, setI18nManager } = create({ sheets })
 export function flushServer() {
   const sheets = StyleResolver.getStyleSheet()
   return [
