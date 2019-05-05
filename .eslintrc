@@ -1,5 +1,8 @@
 {
-  "extends": "eslint:recommended",
+  "extends": [
+    "eslint:recommended",
+    "plugin:ava/recommended"
+  ],
   "parserOptions": {
     "ecmaVersion": 10,
     "sourceType": "module"
