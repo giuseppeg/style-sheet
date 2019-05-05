@@ -23,14 +23,14 @@
     "ava": "ava",
     "ava:e2e": "ava test/e2e/test.js",
     "test:copy:lib": "npm run clean && npm run build:dev && mkdir -p test/e2e/dist && cp dist/index.umd.dev.js test/e2e/dist/_styleSheet.js && cp dist/factory.umd.dev.js test/e2e/dist/_styleSheetFactory.js",
-    "pretest": "xo && npm run test:copy:lib",
+    "pretest": "npm run lint && npm run test:copy:lib",
     "test": "run-p --race test:e2e:server ava",
     "test:unit": "ava test/*.js",
     "pretest:e2e": "npm run test:copy:lib",
     "test:e2e": "run-p --race test:e2e:server ava:e2e",
     "test:e2e:server": "serve ./test/e2e",
     "test:babel": "ava test/babel/*.js",
-    "lint": "xo",
+    "lint": "eslint src test",
     "format": "prettier --single-quote --trailing-comma=es5 --no-semi --write all *.js {src,test}/*.js {src,test}/**/*.js"
   },
   "keywords": [
@@ -56,7 +56,7 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
     "ava": "^1.0.0-beta.8",
-    "eslint-config-prettier": "^4.2.0",
+    "eslint": "^5.16.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.14.3",
     "puppeteer": "^1.8.0",
@@ -66,30 +66,11 @@
     "rollup-plugin-node-resolve": "^4.2.3",
     "rollup-plugin-replace": "^2.0.0",
     "rollup-plugin-terser": "^4.0.4",
-    "serve": "^11.0.0",
-    "xo": "^0.24.0"
+    "serve": "^11.0.0"
   },
   "ava": {
     "require": [
       "./test/_register.js"
     ]
-  },
-  "xo": {
-    "envs": [
-      "node",
-      "browser"
-    ],
-    "extends": "prettier",
-    "ignore": [
-      "test/babel/fixtures/*",
-      "test/e2e/_helpers.js"
-    ],
-    "rules": {
-      "guard-for-in": 0,
-      "unicorn/import-index": 0,
-      "unicorn/filename-case": 0,
-      "unicorn/prefer-type-error": 0,
-      "capitalized-comments": 0
-    }
   }
 }

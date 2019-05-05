@@ -1,3 +1,4 @@
+/* global __dirname:readonly */
 import path from 'path'
 import test from 'ava'
 import { transformFileSync } from '@babel/core'
