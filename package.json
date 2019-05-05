@@ -22,7 +22,7 @@
     "build:prod": "rollup -c --environment NODE_ENV:production",
     "ava": "ava",
     "ava:e2e": "ava test/e2e/test.js",
-    "test:copy:lib": "npm run clean && npm run build:dev && mkdir -p test/e2e/dist && cp dist/dev/index.js test/e2e/dist/_styleSheet.js && cp dist/dev/factory.js test/e2e/dist/_styleSheetFactory.js",
+    "test:copy:lib": "npm run clean && npm run build:dev && mkdir -p test/e2e/dist && cp dist/index.umd.dev.js test/e2e/dist/_styleSheet.js && cp dist/factory.umd.dev.js test/e2e/dist/_styleSheetFactory.js",
     "pretest": "xo && npm run test:copy:lib",
     "test": "run-p --race test:e2e:server ava",
     "test:unit": "ava test/*.js",
