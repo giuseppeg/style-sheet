@@ -40,19 +40,19 @@ const confCreators = ENTRY_FILES.map(entryName => [
   }),
 ])
 
-const EXTENRAL = {
+const EXTERNAL = {
   createElement: ['react'],
   index: ['inline-style-prefixer', 'fnv1a'],
   factory: ['inline-style-prefixer', 'fnv1a'],
 }
 const CJS_CONFIG = confCreators.map(([entryName, creator]) => ({
   ...creator('cjs'),
-  external: EXTENRAL[entryName],
+  external: EXTERNAL[entryName],
 }))
 
 const ESM_CONFIG = confCreators.map(([entryName, creator]) => ({
   ...creator('esm'),
-  external: EXTENRAL[entryName],
+  external: EXTERNAL[entryName],
 }))
 
 const GLOBALS = {
