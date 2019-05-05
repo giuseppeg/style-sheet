@@ -1,0 +1,17 @@
+{
+  "extends": [
+    "eslint:recommended",
+    "plugin:ava/recommended"
+  ],
+  "parserOptions": {
+    "ecmaVersion": 10,
+    "sourceType": "module"
+  },
+  "globals": {
+    "process": "readonly",
+    "window": "readonly",
+    "document": "readonly",
+    "Map": "readonly",
+    "require": "readonly"
+  }
+}

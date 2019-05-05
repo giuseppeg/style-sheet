@@ -163,6 +163,7 @@ function evaluate(babel, path, state) {
             '@babel/plugin-proposal-export-namespace-from',
             // We don't support dynamic imports when evaluating, but don't wanna syntax error
             // This will replace dynamic imports with an object that does nothing
+            // eslint-disable-next-line no-undef
             require.resolve('linaria/lib/babel/dynamic-import-noop'),
           ],
           exclude: /node_modules/,

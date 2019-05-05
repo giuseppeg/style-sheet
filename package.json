@@ -3,9 +3,12 @@
   "version": "3.1.0",
   "description": "Fast CSS in JS library with support for static CSS extraction.",
   "main": "index.js",
+  "module": "dist/index.esm.prod.js",
+  "unpkg": "dist/index.umd.prod.js",
   "files": [
     "dist",
     "babel.js",
+    "createElement.js",
     "factory.js",
     "index.js",
     "server.js"
@@ -14,20 +17,20 @@
     "prepublish": "npm run clean && npm run build",
     "clean": "rm -rf dist && rm -rf test/e2e/dist",
     "prebuild": "npm run clean",
-    "build": "npm run build:dev && npm run build:prod && babel src/server.js -o dist/server.js",
-    "build:dev": "NODE_ENV=development rollup -c",
-    "build:prod": "NODE_ENV=production rollup -c",
+    "build": "npm run build:dev && npm run build:prod",
+    "build:dev": "rollup -c --environment NODE_ENV:development",
+    "build:prod": "rollup -c --environment NODE_ENV:production",
     "ava": "ava",
     "ava:e2e": "ava test/e2e/test.js",
-    "test:copy:lib": "npm run clean && npm run build:dev && mkdir -p test/e2e/dist && cp dist/dev/index.js test/e2e/dist/_styleSheet.js && cp dist/dev/factory.js test/e2e/dist/_styleSheetFactory.js",
-    "pretest": "xo && npm run test:copy:lib",
+    "test:copy:lib": "npm run clean && npm run build:dev && mkdir -p test/e2e/dist && cp dist/index.umd.dev.js test/e2e/dist/_styleSheet.js && cp dist/factory.umd.dev.js test/e2e/dist/_styleSheetFactory.js",
+    "pretest": "npm run lint && npm run test:copy:lib",
     "test": "run-p --race test:e2e:server ava",
     "test:unit": "ava test/*.js",
     "pretest:e2e": "npm run test:copy:lib",
     "test:e2e": "run-p --race test:e2e:server ava:e2e",
     "test:e2e:server": "serve ./test/e2e",
     "test:babel": "ava test/babel/*.js",
-    "lint": "xo",
+    "lint": "eslint src test",
     "format": "prettier --single-quote --trailing-comma=es5 --no-semi --write all *.js {src,test}/*.js {src,test}/**/*.js"
   },
   "keywords": [
@@ -43,7 +46,9 @@
   "license": "MIT",
   "dependencies": {
     "babel-helper-evaluate-path": "^0.5.0",
-    "linaria": "^1.0.0-alpha.12"
+    "fnv1a": "^1.0.1",
+    "inline-style-prefixer": "^5.0.1",
+    "linaria": "1.0.0-alpha.12"
   },
   "devDependencies": {
     "@babel/cli": "^7.1.0",
@@ -51,41 +56,22 @@
     "@babel/preset-env": "^7.1.0",
     "@babel/register": "^7.0.0",
     "ava": "^1.0.0-beta.8",
-    "eslint-config-prettier": "^3.1.0",
-    "fnv1a": "^1.0.1",
-    "inline-style-prefixer": "^5.0.1",
+    "eslint": "^5.16.0",
+    "eslint-plugin-ava": "^6.0.0",
     "npm-run-all": "^4.1.5",
     "prettier": "^1.14.3",
     "puppeteer": "^1.8.0",
-    "rollup": "^0.66.2",
+    "rollup": "^1.11.2",
     "rollup-plugin-babel": "^4.0.3",
     "rollup-plugin-commonjs": "^9.1.8",
-    "rollup-plugin-node-resolve": "^3.4.0",
+    "rollup-plugin-node-resolve": "^4.2.3",
     "rollup-plugin-replace": "^2.0.0",
-    "serve": "^10.0.2",
-    "xo": "^0.23.0"
+    "rollup-plugin-terser": "^4.0.4",
+    "serve": "^11.0.0"
   },
   "ava": {
     "require": [
       "./test/_register.js"
     ]
-  },
-  "xo": {
-    "envs": [
-      "node",
-      "browser"
-    ],
-    "extends": "prettier",
-    "ignore": [
-      "test/babel/fixtures/*",
-      "test/e2e/_helpers.js"
-    ],
-    "rules": {
-      "guard-for-in": 0,
-      "unicorn/import-index": 0,
-      "unicorn/filename-case": 0,
-      "unicorn/prefer-type-error": 0,
-      "capitalized-comments": 0
-    }
   }
 }

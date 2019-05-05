@@ -1,4 +1,4 @@
-/* global testBefore testAfter styleSheet */
+/* global testBefore:readonly testAfter:readonly styleSheet:readonly getComputedStyle:readonly  */
 const test = require('ava')
 // eslint-disable-next-line import/no-unassigned-import
 require('./_setup')

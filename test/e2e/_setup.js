@@ -1,3 +1,4 @@
+/* global global:readonly */
 const puppeteer = require('puppeteer')
 
 global.debug = false
