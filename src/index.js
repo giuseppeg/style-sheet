@@ -1,6 +1,5 @@
 import { create } from './factory'
 import { createSheet as createServerSheet, flush } from './server'
-import { createCreateElement } from './createElement'
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -46,5 +45,3 @@ export function flushServer() {
     { id: '__style_sheet_media__', css: flush(sheets.mediaSheet) },
   ]
 }
-
-export const createElement = createCreateElement({ StyleSheet, StyleResolver })

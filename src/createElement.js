@@ -1,7 +1,7 @@
 // eslint-disable-next-line import/no-unresolved
 import React from 'react'
 
-export function createCreateElement({ StyleSheet, StyleResolver }) {
+export default function createCreateElement({ StyleSheet, StyleResolver }) {
   return function(tag, props, ...children) {
     if (props && props.css) {
       const { css, className, ...rest } = props

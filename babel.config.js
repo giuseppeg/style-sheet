@@ -1,8 +1,8 @@
 module.exports = {
-  presets: [['@babel/env', { loose: true }]],
+  presets: [['@babel/preset-env']],
   env: {
     test: {
-      presets: [['@babel/env', { loose: false, targets: { node: true } }]],
+      presets: [['@babel/preset-env', { targets: { node: true } }]],
     },
   },
 }
