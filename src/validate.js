@@ -23,16 +23,16 @@ export default function validate(obj) {
 export function validateStr(key, isDeclaration) {
   if (isDeclaration) {
     // Value
-    if (shortHandProperties.includes(key)) {
-      error(
-        '`' +
-          key +
-          "`: style-sheet does't support shorthand properties at the moment. This CSS feature will likely be supported in the future. Please expand your shorthand properties for now." +
-          `\n Can't remember what is the long form for \`${key}\`? Ask Google 👉  https://google.com/search?q=${encodeURIComponent(
-            `css ${key} properties`
-          )}`
-      )
-    }
+    // if (shortHandProperties.includes(key)) {
+    //   error(
+    //     '`' +
+    //       key +
+    //       "`: style-sheet does't support shorthand properties at the moment. This CSS feature will likely be supported in the future. Please expand your shorthand properties for now." +
+    //       `\n Can't remember what is the long form for \`${key}\`? Ask Google 👉  https://google.com/search?q=${encodeURIComponent(
+    //         `css ${key} properties`
+    //       )}`
+    //   )
+    // }
     return
   }
 

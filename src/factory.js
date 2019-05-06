@@ -1,6 +1,7 @@
 import compile from './compile'
 import validate from './validate'
 import { fromServer } from './server'
+import createOrderedCSSStyleSheet from './createOrderedCSSStyleSheet'
 
 const isBrowser = typeof window !== 'undefined'
 
@@ -37,18 +38,25 @@ function createStyleSheet(rules, opts) {
 
 function concatClassName(dest, className) {
   if (className.substr(0, 4) !== 'dss_') {
-    return { shouldInject: false, className: `${className} ${dest}` }
+    return {
+      shouldInject: false,
+      className: `${className} ${dest}`,
+      group: null,
+    }
   }
   const property = className.substr(0, className.indexOf('-'))
   if (dest.indexOf(property) > -1) {
-    return { shouldInject: false, className: dest }
+    return { shouldInject: false, className: dest, group: null }
   }
-  return { shouldInject: true, className: `${dest} ${className}` }
+  return {
+    shouldInject: true,
+    className: `${dest} ${className}`,
+    group: className.substring(4, 5),
+  }
 }
 
-function createStyleResolver(sheets, rules, opts) {
-  const { sheet, mediaSheet } = sheets
-  const serverStyles = fromServer(sheets)
+function createStyleResolver(sheet, rules, opts) {
+  const serverStyles = '' // fromServer(sheets)
   let resolved = {}
   let injected = {}
 
@@ -59,7 +67,7 @@ function createStyleResolver(sheets, rules, opts) {
         resolved = {}
         injected = {}
       }
-      return sheets
+      return sheet
     },
     resolve(style) {
       const i18n = opts.i18n || {}
@@ -106,11 +114,10 @@ function createStyleResolver(sheets, rules, opts) {
 
           if (result.shouldInject && !injected[className]) {
             if (rule && serverStyles.indexOf(className) === -1) {
-              const targetSheet = rule.charAt(0) === '@' ? mediaSheet : sheet
-              targetSheet.insertRule(rule)
+              sheet.insertRule(rule, result.group)
               if (i18nRules && !isBrowser) {
                 const i18nIndexInverse = i18nIndex ? 0 : 1
-                targetSheet.insertRule(i18nRules[i18nIndexInverse])
+                sheet.insertRule(i18nRules[i18nIndexInverse], result.group)
                 injected[i18nClassNames[i18nIndexInverse]] = true
               }
             }
@@ -126,20 +133,17 @@ function createStyleResolver(sheets, rules, opts) {
   }
 }
 
-export function createSheets(document = window.document) {
-  const style = document.createElement('style')
-  const mediaStyle = document.createElement('style')
-  document.head.appendChild(style)
-  document.head.appendChild(mediaStyle)
+export function createSheet(document) {
+  document = document || typeof window === 'undefined' ? null : window.document
+  let sheet = null
 
-  return {
-    get sheet() {
-      return style.sheet
-    },
-    get mediaSheet() {
-      return mediaStyle.sheet
-    },
+  if (document) {
+    const style = document.createElement('style')
+    document.head.appendChild(style)
+    sheet = style.sheet
   }
+
+  return sheet
 }
 
 export function create(options = {}) {
@@ -157,28 +161,8 @@ export function create(options = {}) {
   }
   setI18nManager(options.i18n)
 
-  const sheets = options.sheets || createSheets()
+  const sheet = createOrderedCSSStyleSheet(options.sheet || createSheet())
   const rules = {}
-
-  if (!sheets.sheet || !sheets.mediaSheet) {
-    throw new Error(
-      `Create must be called with an object that contains two objects, sheet and mediaSheet,
-      that implement the CSSStyleSheet interface.
-
-      To preserve determinism media queries should be inserted in a separate style sheet,
-      after the main sheet.
-    `
-    )
-  }
-
-  // Moves link tag between the two style tags so that:
-  // 1. new regular rules are appended before
-  // 2. new at rules are appended after
-  // This is necessary to preserve determinism due to specificity.
-  const linkNode = sheets.linkSheet && sheets.linkSheet.ownerNode
-  if (linkNode) {
-    linkNode.parentNode.insertBefore(linkNode, sheets.mediaSheet.ownerNode)
-  }
 
   const opts = {
     get i18n() {
@@ -188,7 +172,7 @@ export function create(options = {}) {
 
   return {
     StyleSheet: createStyleSheet(rules, opts),
-    StyleResolver: createStyleResolver(sheets, rules, opts),
+    StyleResolver: createStyleResolver(sheet, rules, opts),
     setI18nManager,
   }
 }

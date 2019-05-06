@@ -3,12 +3,14 @@
 
 import hashFn from 'fnv1a'
 import { prefix } from 'inline-style-prefixer'
-import { unitless, i18n } from './data'
+import { unitless, i18n, shortHandProperties } from './data'
+import { STYLE_GROUPS } from './createOrderedCSSStyleSheet'
 
 export function createClassName(property, value, descendants, media) {
-  return `dss_${hashFn(property + descendants + media).toString(36)}-${hashFn(
-    String(value)
-  ).toString(36)}`
+  const ruleType = getRuleType(property, media)
+  return `dss_${ruleType}${hashFn(property + descendants + media).toString(
+    36
+  )}-${hashFn(String(value)).toString(36)}`
 }
 
 const hyphenate = s => s.replace(/[A-Z]|^ms/g, '-$&').toLowerCase()
@@ -35,6 +37,13 @@ export function createRule(className, declaration, descendants, media) {
   const rule = selector + '{' + strigifyDeclaration(declaration) + '}'
   if (!media) return rule
   return media + '{' + rule + '}'
+}
+
+function getRuleType(prop, media) {
+  if (shortHandProperties.indexOf(prop) > -1) {
+    return media ? STYLE_GROUPS.mediaShorthand : STYLE_GROUPS.shorthand
+  }
+  return media ? STYLE_GROUPS.mediaAtomic : STYLE_GROUPS.atomic
 }
 
 function normalizeValue(value) {
