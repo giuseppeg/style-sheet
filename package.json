@@ -45,6 +45,8 @@
   "author": "Giuseppe Gurgone",
   "license": "MIT",
   "dependencies": {
+    "@babel/plugin-proposal-export-namespace-from": "^7.2.0",
+    "@babel/plugin-transform-modules-commonjs": "^7.4.4",
     "babel-helper-evaluate-path": "^0.5.0",
     "fnv1a": "^1.0.1",
     "inline-style-prefixer": "^5.0.1",
