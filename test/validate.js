@@ -1,6 +1,5 @@
 import test from 'ava'
 import validate from '../src/validate'
-import { shortHandProperties } from '../src/data'
 
 test('simple object pass validation', t => {
   t.notThrows(() => {
@@ -16,16 +15,6 @@ test('throws when using important', t => {
       color: 'red !important',
     })
   }, /important/)
-})
-
-test('throws when using shorthands values', t => {
-  shortHandProperties.forEach(prop => {
-    t.throws(() => {
-      validate({
-        [prop]: 'mock',
-      })
-    }, /support shorthand properties/)
-  })
 })
 
 test('nested: throws when grouping selectors', t => {

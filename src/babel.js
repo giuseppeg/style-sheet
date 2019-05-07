@@ -1,22 +1,13 @@
 import evaluateSimple from 'babel-helper-evaluate-path'
 import evaluateComplex from 'linaria/lib/babel/evaluate'
 import { create } from './factory'
-import { createSheet, cssRulesToString } from './server'
 
-const sheets = {
-  sheet: createSheet(),
-  mediaSheet: createSheet(),
-}
-
-const { StyleSheet, StyleResolver } = create({ sheets })
+const { StyleSheet, StyleResolver } = create()
 
 // This function returns the extracted CSS to save in a .css file.
 // It must be called after all the files are processed by Babel.
 export function getCss() {
-  return [
-    cssRulesToString(sheets.sheet.cssRules),
-    cssRulesToString(sheets.mediaSheet.cssRules),
-  ].join(' ')
+  return StyleResolver.getStyleSheet().getTextContent()
 }
 
 export default function(babel) {

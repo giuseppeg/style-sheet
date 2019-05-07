@@ -1,6 +1,5 @@
 import compile from './compile'
 import validate from './validate'
-import { fromServer } from './server'
 import createOrderedCSSStyleSheet from './createOrderedCSSStyleSheet'
 
 const isBrowser = typeof window !== 'undefined'

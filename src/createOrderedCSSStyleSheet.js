@@ -92,6 +92,12 @@ export default function createOrderedCSSStyleSheet(sheet) {
     insertRule(cssText, groupValue) {
       const group = Number(groupValue)
 
+      if (isNaN(group)) {
+        throw new Error(
+          `${groupValue} - Invalid group. Use OrderedCSSStyleSheet.insertRule(cssText, groupId)`
+        )
+      }
+
       // Create a new group.
       if (groups[group] == null) {
         const markerRule = encodeGroupRule(group)
@@ -149,7 +155,8 @@ const pattern = /\s*([,])\s*/g
 function getSelectorText(cssText) {
   const split = cssText.split('{')
   let selector = split[0].trim()
-  selector = selector[0].startsWith('@media') ? split[1].trim() : selector
+  selector = selector.startsWith('@media') ? split[1].trim() : selector
+  selector = selector.trim()
   return selector !== '' ? selector.replace(pattern, '$1') : null
 }
 

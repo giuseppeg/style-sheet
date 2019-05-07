@@ -1,58 +1,46 @@
 import test from 'ava'
-import { createSheet as create, flush } from '../src/server'
+import create from '../src/createOrderedCSSStyleSheet'
 
 test('creates a sheet', t => {
   const sheet = create()
   t.truthy(sheet.insertRule)
-  t.deepEqual(sheet.cssRules, { length: 0 })
+  t.is(sheet.getTextContent(), '')
 })
 
 test('inserts rules', t => {
   const sheet = create()
-  sheet.insertRule('div { color: red }')
-  t.deepEqual(sheet.cssRules, {
-    0: { cssText: 'div { color: red }' },
-    length: 1,
-  })
+  sheet.insertRule('.test { color: red }', 0)
+  t.snapshot(sheet.getTextContent())
 })
 
-test('inserts returns the index', t => {
+test('does not insert duplicates', t => {
   const sheet = create()
-  sheet.insertRule('div { color: red }')
-  const index = sheet.insertRule('div { color: green }')
-  t.is(index, 1)
+  sheet.insertRule('.test { color: red }', 0)
+  sheet.insertRule('.test { color: red }', 0)
+  sheet.insertRule('.test1 { color: green }', 0)
+  t.snapshot(sheet.getTextContent())
 })
 
-test('increases index when inserting rules', t => {
+test('insert @media queries', t => {
   const sheet = create()
-  sheet.insertRule('div { color: red }')
-  sheet.insertRule('div { color: green }')
-  t.is(sheet.cssRules.length, 2)
+  sheet.insertRule('@media (min-width: 300px) { .test1 { color: red } }', 0)
+  sheet.insertRule(
+    '@media (min-width: 300px) { .test1:hover { color: red } }',
+    0
+  )
+  sheet.insertRule(
+    '@media (min-width: 300px) { .test1 > :hover { color: red } }',
+    0
+  )
+  t.snapshot(sheet.getTextContent())
 })
 
-test('inserts rules at index', t => {
-  const sheet = create()
-  sheet.insertRule('div { color: red }')
-  sheet.insertRule('div { color: green }', 0)
-  t.deepEqual(sheet.cssRules, {
-    0: { cssText: 'div { color: green }' },
-    length: 1,
-  })
-})
-
-test('throws when providing a index > cssRules.length', t => {
-  const sheet = create()
-  t.throws(() => {
-    sheet.insertRule('div { color: green }', 10)
-  })
-})
-
-test('flush', t => {
-  const sheet = create()
-  const r1 = 'div { color: red }'
-  const r2 = 'div { color: green }'
-  sheet.insertRule(r1)
-  sheet.insertRule(r2)
-  t.is(flush(sheet), r1 + r2)
-  t.deepEqual(sheet.cssRules, { length: 0 })
-})
+// test('flush', t => {
+//   const sheet = create()
+//   const r1 = 'div { color: red }'
+//   const r2 = 'div { color: green }'
+//   sheet.insertRule(r1)
+//   sheet.insertRule(r2)
+//   t.is(flush(sheet), r1 + r2)
+//   t.deepEqual(sheet.cssRules, { length: 0 })
+// })

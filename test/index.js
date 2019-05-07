@@ -1,16 +1,6 @@
 import test from 'ava'
-// import { create as _create } from '../src/factory'
 import { create } from '../src/factory'
-import { createSheet, flush } from '../src/server'
 import { resolverToString } from './_utils'
-
-// const create = () =>
-//   _create({
-//     sheets: {
-//       sheet: createSheet(),
-//       mediaSheet: createSheet(),
-//     },
-//   })
 
 test('works', t => {
   const { StyleSheet, StyleResolver } = create()
@@ -145,31 +135,31 @@ test('adds vendor prefixes', t => {
   )
 })
 
-test.skip('flush multiple times', t => {
-  const { StyleSheet, StyleResolver } = create()
-  let styles = StyleSheet.create({
-    root: {
-      color: 'red',
-    },
-  })
-  StyleResolver.resolve(styles.root)
-  let sheet = StyleResolver.getStyleSheet()
-  t.is(sheet.cssRules.length, 1)
-  let result = flush(sheet)
-  t.is(sheet.cssRules.length, 0)
-  t.is(StyleResolver.getStyleSheet().sheet.cssRules.length, 0)
-  t.is(result, '.dss_h28rbs-i0tgik{color:red;}')
-
-  styles = StyleSheet.create({
-    root: {
-      color: 'red',
-    },
-  })
-  StyleResolver.resolve(styles.root)
-  sheet = StyleResolver.getStyleSheet().sheet
-  t.is(sheet.cssRules.length, 1)
-  result = flush(sheet)
-  t.is(sheet.cssRules.length, 0)
-  t.is(StyleResolver.getStyleSheet().sheet.cssRules.length, 0)
-  t.is(result, '.dss_h28rbs-i0tgik{color:red;}')
-})
+// test.skip('flush multiple times', t => {
+//   const { StyleSheet, StyleResolver } = create()
+//   let styles = StyleSheet.create({
+//     root: {
+//       color: 'red',
+//     },
+//   })
+//   StyleResolver.resolve(styles.root)
+//   let sheet = StyleResolver.getStyleSheet()
+//   t.is(sheet.cssRules.length, 1)
+//   let result = flush(sheet)
+//   t.is(sheet.cssRules.length, 0)
+//   t.is(StyleResolver.getStyleSheet().sheet.cssRules.length, 0)
+//   t.is(result, '.dss_h28rbs-i0tgik{color:red;}')
+//
+//   styles = StyleSheet.create({
+//     root: {
+//       color: 'red',
+//     },
+//   })
+//   StyleResolver.resolve(styles.root)
+//   sheet = StyleResolver.getStyleSheet().sheet
+//   t.is(sheet.cssRules.length, 1)
+//   result = flush(sheet)
+//   t.is(sheet.cssRules.length, 0)
+//   t.is(StyleResolver.getStyleSheet().sheet.cssRules.length, 0)
+//   t.is(result, '.dss_h28rbs-i0tgik{color:red;}')
+// })

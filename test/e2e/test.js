@@ -105,34 +105,20 @@ test('inserts only the resolved rules', async t => {
 
     StyleResolver.resolve(styles.test)
     const resolved = []
-    resolved.push(
-      [].map
-        .call(
-          StyleResolver.getStyleSheet().sheet.cssRules,
-          rule => rule.cssText
-        )
-        .join('')
-    )
+    resolved.push(StyleResolver.getStyleSheet().getTextContent())
 
     setI18nManager({
       isRTL: false,
       doLeftAndRightSwapInRTL: false,
     })
     StyleResolver.resolve(styles.test)
-    resolved.push(
-      [].map
-        .call(
-          StyleResolver.getStyleSheet().sheet.cssRules,
-          rule => rule.cssText
-        )
-        .join('')
-    )
+    resolved.push(StyleResolver.getStyleSheet().getTextContent())
     return resolved
   })
 
   t.deepEqual(styles, [
-    '.dss_xjidwl-oyp9nw { right: 10px; }',
-    '.dss_52pxm8-7qvd50 { left: 10px; }.dss_xjidwl-oyp9nw { right: 10px; }',
+    '[style-sheet-group="3"]{}\n.dss_3xjidwl-oyp9nw{right:10px;}',
+    '[style-sheet-group="3"]{}\n.dss_3xjidwl-oyp9nw{right:10px;}\n.dss_352pxm8-7qvd50{left:10px;}',
   ])
 
   await testAfter(context)
