@@ -87,19 +87,9 @@ const BABEL_PLUGIN_CONFIG = {
   external: ['linaria/lib/babel/evaluate', 'babel-helper-evaluate-path'],
 }
 
-const SERVER_CONFIG = {
-  input: './src/server.js',
-  output: {
-    file: './dist/server.js',
-    format: 'cjs',
-  },
-  plugins: [commonjs()],
-}
-
 export default [
   ...CJS_CONFIG,
   ...ESM_CONFIG,
   ...UMD_CONFIG,
-  SERVER_CONFIG,
   BABEL_PLUGIN_CONFIG,
 ]

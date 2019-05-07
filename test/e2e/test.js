@@ -11,6 +11,7 @@ test('minimal testcase', async t => {
 
   const color = await page.evaluate(() => {
     const { StyleSheet, StyleResolver } = styleSheet
+
     const styles = StyleSheet.create({
       test: {
         color: 'green',
@@ -35,9 +36,13 @@ test('reconciles i18n values', async t => {
       await page.evaluate(() => {
         const preRendered = document.createElement('style')
         preRendered.id = '__style_sheet__'
-        preRendered.textContent =
-          '.dss_1idvwo2-oyp9nw{border-top-right-radius:10px;}.dss_1qlnxpd-7qvd50{border-top-left-radius:10px;}.dss_xjidwl-oyp9nw{right:10px;}.dss_52pxm8-7qvd50{left:10px;}</style>'
-
+        preRendered.textContent = `
+          [style-sheet-group="3"]{}
+          .dss_31idvwo2-oyp9nw{border-top-right-radius:10px;}
+          .dss_31qlnxpd-7qvd50{border-top-left-radius:10px;}
+          .dss_3xjidwl-oyp9nw{right:10px;}
+          .dss_352pxm8-7qvd50{left:10px;}
+        `
         document.head.appendChild(preRendered)
       })
     },
