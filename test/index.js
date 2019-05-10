@@ -11,9 +11,9 @@ test('works', t => {
   })
 
   t.deepEqual(result, {
-    root: ['dss_3h28rbs-i0tgik'],
+    root: ['dss3_h28rbs-i0tgik'],
   })
-  t.is(StyleResolver.resolve(result.root), 'dss_3h28rbs-i0tgik')
+  t.is(StyleResolver.resolve(result.root), 'dss3_h28rbs-i0tgik')
 })
 
 test('works with multiple rules', t => {
@@ -82,7 +82,7 @@ test('hashes selectors deterministically', t => {
     },
   })
 
-  t.is(result.root[0], 'dss_3h28rbs-i0tgik')
+  t.is(result.root[0], 'dss3_h28rbs-i0tgik')
 })
 
 test('hashes media queries and descendant selectors', t => {
@@ -99,8 +99,8 @@ test('hashes media queries and descendant selectors', t => {
   })
   StyleResolver.resolve(result.root)
   t.snapshot(resolverToString(StyleResolver))
-  t.is(result.root[0], 'dss_73bdajn-i0tgik')
-  t.is(result.root[1], 'dss_341vss2-i0tgik')
+  t.is(result.root[0], 'dss7_3bdajn-i0tgik')
+  t.is(result.root[1], 'dss3_41vss2-i0tgik')
 })
 
 test('supports fallback values', t => {
@@ -110,7 +110,7 @@ test('supports fallback values', t => {
       color: ['red', 'rgba(255, 0, 0, 1)'],
     },
   })
-  t.deepEqual(styles.root, ['dss_3h28rbs-aulp3c'])
+  t.deepEqual(styles.root, ['dss3_h28rbs-aulp3c'])
   StyleResolver.resolve(styles.root)
   t.snapshot(resolverToString(StyleResolver))
 })
@@ -124,14 +124,14 @@ test('adds vendor prefixes', t => {
   })
 
   t.deepEqual(styles, {
-    root: ['dss_31jgjtkn-1k19bls'],
+    root: ['dss3_1jgjtkn-1k19bls'],
   })
   StyleResolver.resolve(styles.root)
   const css = resolverToString(StyleResolver)
   t.is(
     css,
     '[style-sheet-group="3"]{}\n' +
-      '.dss_31jgjtkn-1k19bls{-webkit-filter:blur(10px);filter:blur(10px);}'
+      '.dss3_1jgjtkn-1k19bls{-webkit-filter:blur(10px);filter:blur(10px);}'
   )
 })
 
@@ -148,7 +148,7 @@ test('adds vendor prefixes', t => {
 //   let result = flush(sheet)
 //   t.is(sheet.cssRules.length, 0)
 //   t.is(StyleResolver.getStyleSheet().sheet.cssRules.length, 0)
-//   t.is(result, '.dss_h28rbs-i0tgik{color:red;}')
+//   t.is(result, '.dssh_28rbs-i0tgik{color:red;}')
 //
 //   styles = StyleSheet.create({
 //     root: {
@@ -161,5 +161,5 @@ test('adds vendor prefixes', t => {
 //   result = flush(sheet)
 //   t.is(sheet.cssRules.length, 0)
 //   t.is(StyleResolver.getStyleSheet().sheet.cssRules.length, 0)
-//   t.is(result, '.dss_h28rbs-i0tgik{color:red;}')
+//   t.is(result, '.dssh_28rbs-i0tgik{color:red;}')
 // })

@@ -8,7 +8,7 @@ import { STYLE_GROUPS } from './createOrderedCSSStyleSheet'
 
 export function createClassName(property, value, descendants, media) {
   const ruleType = getRuleType(property, media)
-  return `dss_${ruleType}${hashFn(property + descendants + media).toString(
+  return `dss${ruleType}_${hashFn(property + descendants + media).toString(
     36
   )}-${hashFn(String(value)).toString(36)}`
 }

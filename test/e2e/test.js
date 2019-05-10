@@ -38,10 +38,10 @@ test('reconciles i18n values', async t => {
         preRendered.id = '__style_sheet__'
         preRendered.textContent = `
           [style-sheet-group="3"]{}
-          .dss_31idvwo2-oyp9nw{border-top-right-radius:10px;}
-          .dss_31qlnxpd-7qvd50{border-top-left-radius:10px;}
-          .dss_3xjidwl-oyp9nw{right:10px;}
-          .dss_352pxm8-7qvd50{left:10px;}
+          .dss3_1idvwo2-oyp9nw{border-top-right-radius:10px;}
+          .dss3_1qlnxpd-7qvd50{border-top-left-radius:10px;}
+          .dss3_xjidwl-oyp9nw{right:10px;}
+          .dss3_52pxm8-7qvd50{left:10px;}
         `
         document.head.appendChild(preRendered)
       })
@@ -122,8 +122,8 @@ test('inserts only the resolved rules', async t => {
   })
 
   t.deepEqual(styles, [
-    '[style-sheet-group="3"]{}\n.dss_3xjidwl-oyp9nw{right:10px;}',
-    '[style-sheet-group="3"]{}\n.dss_3xjidwl-oyp9nw{right:10px;}\n.dss_352pxm8-7qvd50{left:10px;}',
+    '[style-sheet-group="3"]{}\n.dss3_xjidwl-oyp9nw{right:10px;}',
+    '[style-sheet-group="3"]{}\n.dss3_xjidwl-oyp9nw{right:10px;}\n.dss3_52pxm8-7qvd50{left:10px;}',
   ])
 
   await testAfter(context)

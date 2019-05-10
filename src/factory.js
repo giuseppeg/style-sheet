@@ -36,7 +36,7 @@ function createStyleSheet(rules, opts) {
 }
 
 function concatClassName(dest, className) {
-  if (className.substr(0, 4) !== 'dss_') {
+  if (className.substr(0, 3) !== 'dss') {
     return {
       shouldInject: false,
       className: `${className} ${dest}`,
@@ -50,7 +50,7 @@ function concatClassName(dest, className) {
   return {
     shouldInject: true,
     className: `${dest} ${className}`,
-    group: className.substring(4, 5),
+    group: className.substring(3, className.indexOf('_')),
   }
 }
 
