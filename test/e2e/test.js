@@ -128,3 +128,92 @@ test('inserts only the resolved rules', async t => {
 
   await testAfter(context)
 })
+
+test('resolves shorthand properties', async t => {
+  const context = await testBefore()
+  const { gotoPage, page } = context
+
+  await gotoPage('test.html')
+
+  const margins = await page.evaluate(() => {
+    const { StyleSheet, StyleResolver } = styleSheet
+
+    const styles = StyleSheet.create({
+      test: {
+        margin: 10,
+        marginTop: 20,
+        '@media (min-width: 0px)': {
+          marginLeft: 30,
+        },
+      },
+    })
+    const root = document.querySelector('#root')
+    root.className = StyleResolver.resolve(styles.test)
+    const computed = getComputedStyle(root)
+    return [
+      computed.getPropertyValue('margin'),
+      computed.getPropertyValue('margin-top'),
+    ].join(', ')
+  })
+
+  t.is(margins, '20px 10px 10px 30px, 20px')
+
+  await testAfter(context)
+})
+
+test('reconciles shorthand properties', async t => {
+  const context = await testBefore()
+  const { gotoPage, page } = context
+
+  const preRenderedStyles = `[style-sheet-group="1"] { }
+.dss1_1nrzrej-7qvd50 { margin: 10px; }
+[style-sheet-group="3"] { }
+.dss3_1buiceq-13dvipr { margin-top: 20px; }`
+
+  await gotoPage('test.html', {
+    onLoad: async () => {
+      await page.evaluate(
+        preRenderedStyles => {
+          const preRendered = document.createElement('style')
+          preRendered.id = '__style_sheet__'
+          preRendered.textContent = preRenderedStyles
+          document.head.appendChild(preRendered)
+        },
+        [preRenderedStyles]
+      )
+    },
+  })
+
+  const before = await page.evaluate(() => {
+    const { StyleResolver } = styleSheet
+    return StyleResolver.getStyleSheet().getTextContent()
+  })
+
+  t.is(before, preRenderedStyles)
+
+  const after = await page.evaluate(() => {
+    const { StyleSheet, StyleResolver } = styleSheet
+
+    const styles = StyleSheet.create({
+      test: {
+        margin: 10,
+        marginTop: 20,
+        '@media (max-width: 200px)': {
+          marginLeft: 30,
+        },
+      },
+    })
+
+    StyleResolver.resolve(styles.test)
+    return StyleResolver.getStyleSheet().getTextContent()
+  })
+
+  const beforeWithMedia =
+    before +
+    `
+[style-sheet-group="7"]{}
+@media (max-width: 200px){.dss7_zi3on2-11pur1y{margin-left:30px;}}`
+  t.is(beforeWithMedia, after)
+
+  await testAfter(context)
+})

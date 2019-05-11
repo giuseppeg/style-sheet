@@ -84,8 +84,6 @@ export default function createOrderedCSSStyleSheet(sheet) {
       }, '')
     },
 
-    sheet,
-
     /**
      * Insert a rule into the style sheet
      */
