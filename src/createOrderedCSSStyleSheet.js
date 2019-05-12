@@ -171,11 +171,11 @@ function insertRuleAt(root, cssText, position) {
 
 export const STYLE_GROUPS = {
   classic: 0,
-  shorthand: 1,
-  i18nShorthand: 2,
-  atomic: 3,
-  mediaClassic: 4,
-  mediaShorthand: 5,
-  mediaI18nShorthand: 6,
+  mediaClassic: 1,
+  shorthand: 2,
+  mediaShorthand: 3,
+  i18nShorthand: 4,
+  mediaI18nShorthand: 5,
+  atomic: 6,
   mediaAtomic: 7,
 }

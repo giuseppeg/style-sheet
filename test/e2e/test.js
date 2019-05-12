@@ -37,11 +37,11 @@ test('reconciles i18n values', async t => {
         const preRendered = document.createElement('style')
         preRendered.id = '__style_sheet__'
         preRendered.textContent = `
-          [style-sheet-group="3"]{}
-          .dss3_1idvwo2-oyp9nw{border-top-right-radius:10px;}
-          .dss3_1qlnxpd-7qvd50{border-top-left-radius:10px;}
-          .dss3_xjidwl-oyp9nw{right:10px;}
-          .dss3_52pxm8-7qvd50{left:10px;}
+          [style-sheet-group="6"]{}
+          .dss6_1idvwo2-oyp9nw{border-top-right-radius:10px;}
+          .dss6_1qlnxpd-7qvd50{border-top-left-radius:10px;}
+          .dss6_xjidwl-oyp9nw{right:10px;}
+          .dss6_52pxm8-7qvd50{left:10px;}
         `
         document.head.appendChild(preRendered)
       })
@@ -122,8 +122,8 @@ test('inserts only the resolved rules', async t => {
   })
 
   t.deepEqual(styles, [
-    '[style-sheet-group="3"]{}\n.dss3_xjidwl-oyp9nw{right:10px;}',
-    '[style-sheet-group="3"]{}\n.dss3_xjidwl-oyp9nw{right:10px;}\n.dss3_52pxm8-7qvd50{left:10px;}',
+    '[style-sheet-group="6"]{}\n.dss6_xjidwl-oyp9nw{right:10px;}',
+    '[style-sheet-group="6"]{}\n.dss6_xjidwl-oyp9nw{right:10px;}\n.dss6_52pxm8-7qvd50{left:10px;}',
   ])
 
   await testAfter(context)
@@ -165,10 +165,10 @@ test('reconciles shorthand properties', async t => {
   const context = await testBefore()
   const { gotoPage, page } = context
 
-  const preRenderedStyles = `[style-sheet-group="1"] { }
-.dss1_1nrzrej-7qvd50 { margin: 10px; }
-[style-sheet-group="3"] { }
-.dss3_1buiceq-13dvipr { margin-top: 20px; }`
+  const preRenderedStyles = `[style-sheet-group="2"] { }
+.dss2_1nrzrej-7qvd50 { margin: 10px; }
+[style-sheet-group="6"] { }
+.dss6_1buiceq-13dvipr { margin-top: 20px; }`
 
   await gotoPage('test.html', {
     onLoad: async () => {
