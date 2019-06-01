@@ -11,9 +11,9 @@ test('works', t => {
   })
 
   t.deepEqual(result, {
-    root: ['dss6_h28rbs-i0tgik'],
+    root: ['dss10_h28rbs-i0tgik'],
   })
-  t.is(StyleResolver.resolve(result.root), 'dss6_h28rbs-i0tgik')
+  t.is(StyleResolver.resolve(result.root), 'dss10_h28rbs-i0tgik')
 })
 
 test('works with multiple rules', t => {
@@ -82,7 +82,7 @@ test('hashes selectors deterministically', t => {
     },
   })
 
-  t.is(result.root[0], 'dss6_h28rbs-i0tgik')
+  t.is(result.root[0], 'dss10_h28rbs-i0tgik')
 })
 
 test('hashes media queries and descendant selectors', t => {
@@ -99,8 +99,8 @@ test('hashes media queries and descendant selectors', t => {
   })
   StyleResolver.resolve(result.root)
   t.snapshot(resolverToString(StyleResolver))
-  t.is(result.root[0], 'dss7_3bdajn-i0tgik')
-  t.is(result.root[1], 'dss6_41vss2-i0tgik')
+  t.is(result.root[0], 'dss11_3bdajn-i0tgik')
+  t.is(result.root[1], 'dss10_41vss2-i0tgik')
 })
 
 test('supports fallback values', t => {
@@ -110,7 +110,7 @@ test('supports fallback values', t => {
       color: ['red', 'rgba(255, 0, 0, 1)'],
     },
   })
-  t.deepEqual(styles.root, ['dss6_h28rbs-aulp3c'])
+  t.deepEqual(styles.root, ['dss10_h28rbs-aulp3c'])
   StyleResolver.resolve(styles.root)
   t.snapshot(resolverToString(StyleResolver))
 })
@@ -124,14 +124,14 @@ test('adds vendor prefixes', t => {
   })
 
   t.deepEqual(styles, {
-    root: ['dss6_1jgjtkn-1k19bls'],
+    root: ['dss10_1jgjtkn-1k19bls'],
   })
   StyleResolver.resolve(styles.root)
   const css = resolverToString(StyleResolver)
   t.is(
     css,
-    '[style-sheet-group="6"]{}\n' +
-      '.dss6_1jgjtkn-1k19bls{-webkit-filter:blur(10px);filter:blur(10px);}'
+    '[style-sheet-group="10"]{}\n' +
+      '.dss10_1jgjtkn-1k19bls{-webkit-filter:blur(10px);filter:blur(10px);}'
   )
 })
 

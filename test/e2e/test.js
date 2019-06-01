@@ -37,11 +37,11 @@ test('reconciles i18n values', async t => {
         const preRendered = document.createElement('style')
         preRendered.id = '__style_sheet__'
         preRendered.textContent = `
-          [style-sheet-group="6"]{}
-          .dss6_1idvwo2-oyp9nw{border-top-right-radius:10px;}
-          .dss6_1qlnxpd-7qvd50{border-top-left-radius:10px;}
-          .dss6_xjidwl-oyp9nw{right:10px;}
-          .dss6_52pxm8-7qvd50{left:10px;}
+          [style-sheet-group="10"]{}
+          .dss10_1idvwo2-oyp9nw{border-top-right-radius:10px;}
+          .dss10_1qlnxpd-7qvd50{border-top-left-radius:10px;}
+          .dss10_xjidwl-oyp9nw{right:10px;}
+          .dss10_52pxm8-7qvd50{left:10px;}
         `
         document.head.appendChild(preRendered)
       })
@@ -88,7 +88,7 @@ test('reconciles i18n values', async t => {
   await testAfter(context)
 })
 
-test('inserts only the resolved rules', async t => {
+test('inserts only the resolved i18n rules', async t => {
   const context = await testBefore()
   const { gotoPage, page } = context
 
@@ -122,8 +122,8 @@ test('inserts only the resolved rules', async t => {
   })
 
   t.deepEqual(styles, [
-    '[style-sheet-group="6"]{}\n.dss6_xjidwl-oyp9nw{right:10px;}',
-    '[style-sheet-group="6"]{}\n.dss6_xjidwl-oyp9nw{right:10px;}\n.dss6_52pxm8-7qvd50{left:10px;}',
+    '[style-sheet-group="10"]{}\n.dss10_xjidwl-oyp9nw{right:10px;}',
+    '[style-sheet-group="10"]{}\n.dss10_xjidwl-oyp9nw{right:10px;}\n.dss10_52pxm8-7qvd50{left:10px;}',
   ])
 
   await testAfter(context)
@@ -150,6 +150,7 @@ test('resolves shorthand properties', async t => {
     const root = document.querySelector('#root')
     root.className = StyleResolver.resolve(styles.test)
     const computed = getComputedStyle(root)
+
     return [
       computed.getPropertyValue('margin'),
       computed.getPropertyValue('margin-top'),
@@ -167,8 +168,8 @@ test('reconciles shorthand properties', async t => {
 
   const preRenderedStyles = `[style-sheet-group="2"] { }
 .dss2_1nrzrej-7qvd50 { margin: 10px; }
-[style-sheet-group="6"] { }
-.dss6_1buiceq-13dvipr { margin-top: 20px; }`
+[style-sheet-group="10"] { }
+.dss10_1buiceq-13dvipr { margin-top: 20px; }`
 
   await gotoPage('test.html', {
     onLoad: async () => {
@@ -211,9 +212,59 @@ test('reconciles shorthand properties', async t => {
   const beforeWithMedia =
     before +
     `
-[style-sheet-group="7"]{}
-@media (max-width: 200px){.dss7_zi3on2-11pur1y{margin-left:30px;}}`
+[style-sheet-group="11"]{}
+@media (max-width: 200px){.dss11_zi3on2-11pur1y{margin-left:30px;}}`
   t.is(beforeWithMedia, after)
+
+  await testAfter(context)
+})
+
+test('combinator selectors are more specific than states', async t => {
+  const context = await testBefore()
+  const { gotoPage, page } = context
+
+  await gotoPage('test.html')
+
+  await page.evaluate(() => {
+    const { StyleSheet, StyleResolver } = styleSheet
+
+    const styles = StyleSheet.create({
+      test: {
+        height: 10,
+        color: 'blue',
+        '&:hover': {
+          color: 'red',
+          margin: 10,
+        },
+      },
+      another: {
+        ':hover > &': {
+          color: 'green',
+          margin: 20,
+          marginTop: 30,
+        },
+      },
+    })
+
+    // Assume sometime ago this was already resolved and injected.
+    StyleResolver.resolve(styles.another)
+
+    const root = document.querySelector('#root')
+    root.className = StyleResolver.resolve([styles.test, styles.another])
+  })
+
+  await page.hover('body')
+
+  const result = await page.evaluate(() => {
+    const root = document.querySelector('#root')
+    const computedStyle = getComputedStyle(root)
+    return [
+      computedStyle.getPropertyValue('color'),
+      computedStyle.getPropertyValue('margin'),
+    ].join(',')
+  })
+
+  t.is(result, 'rgb(0, 128, 0),30px 20px 20px')
 
   await testAfter(context)
 })

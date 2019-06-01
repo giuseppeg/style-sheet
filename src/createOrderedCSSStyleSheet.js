@@ -145,8 +145,8 @@ function decodeGroupRule(cssRule) {
 
 function getOrderedGroups(obj) {
   return Object.keys(obj)
-    .sort()
     .map(k => Number(k))
+    .sort((a, b) => (a > b ? 1 : -1))
 }
 
 const pattern = /\s*([,])\s*/g
@@ -169,13 +169,28 @@ function insertRuleAt(root, cssText, position) {
   }
 }
 
-export const STYLE_GROUPS = {
-  classic: 0,
-  mediaClassic: 1,
-  shorthand: 2,
-  mediaShorthand: 3,
-  i18nShorthand: 4,
-  mediaI18nShorthand: 5,
-  atomic: 6,
-  mediaAtomic: 7,
-}
+export const STYLE_GROUPS = [
+  'classic',
+  'mediaClassic',
+
+  'shorthand',
+  'mediaShorthand',
+
+  'shorthandCombinator',
+  'mediaShorthandCombinator',
+
+  'i18nShorthand',
+  'mediaI18nShorthand',
+
+  'i18nShorthandCombinator',
+  'mediaI18nShorthandCombinator',
+
+  'atomic',
+  'mediaAtomic',
+
+  'atomicCombinator',
+  'mediaAtomicCombinator',
+].reduce((groups, name, index) => {
+  groups[name] = index
+  return groups
+}, {})

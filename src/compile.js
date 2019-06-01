@@ -7,7 +7,7 @@ import { unitless, i18n, shortHandProperties } from './data'
 import { STYLE_GROUPS } from './createOrderedCSSStyleSheet'
 
 export function createClassName(property, value, descendants, media) {
-  const ruleType = getRuleType(property, media)
+  const ruleType = getRuleType(property, media, descendants)
   return `dss${ruleType}_${hashFn(property + descendants + media).toString(
     36
   )}-${hashFn(String(value)).toString(36)}`
@@ -39,11 +39,18 @@ export function createRule(className, declaration, descendants, media) {
   return media + '{' + rule + '}'
 }
 
-function getRuleType(prop, media) {
+function getRuleType(prop, media, descendants) {
+  let name = ''
   if (shortHandProperties.indexOf(prop) > -1) {
-    return media ? STYLE_GROUPS.mediaShorthand : STYLE_GROUPS.shorthand
+    name = media ? 'mediaShorthand' : 'shorthand'
+  } else {
+    name = media ? 'mediaAtomic' : 'atomic'
   }
-  return media ? STYLE_GROUPS.mediaAtomic : STYLE_GROUPS.atomic
+  // is a combinator selector eg :hover > &
+  if (descendants && descendants.substr(0, 2) !== '&:') {
+    name += 'Combinator'
+  }
+  return STYLE_GROUPS[name]
 }
 
 function normalizeValue(value) {

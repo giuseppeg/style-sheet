@@ -35,12 +35,13 @@ test('insert @media queries', t => {
   t.snapshot(sheet.getTextContent())
 })
 
-// test('flush', t => {
-//   const sheet = create()
-//   const r1 = 'div { color: red }'
-//   const r2 = 'div { color: green }'
-//   sheet.insertRule(r1)
-//   sheet.insertRule(r2)
-//   t.is(flush(sheet), r1 + r2)
-//   t.deepEqual(sheet.cssRules, { length: 0 })
-// })
+test('inserts groups in order', t => {
+  const sheet = create()
+  sheet.insertRule('.test1 { color: red }', 2)
+  sheet.insertRule('.test2 { color: red }', 2.5)
+  sheet.insertRule('.test3 { color: green }', 10)
+  sheet.insertRule('.test4 { color: green }', 20)
+  sheet.insertRule('.test5 { color: green }', 20.5)
+
+  t.snapshot(sheet.getTextContent())
+})
