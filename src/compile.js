@@ -3,12 +3,14 @@
 
 import hashFn from 'fnv1a'
 import { prefix } from 'inline-style-prefixer'
-import { unitless, i18n } from './data'
+import { unitless, i18n, shortHandProperties } from './data'
+import { STYLE_GROUPS } from './createOrderedCSSStyleSheet'
 
 export function createClassName(property, value, descendants, media) {
-  return `dss_${hashFn(property + descendants + media).toString(36)}-${hashFn(
-    String(value)
-  ).toString(36)}`
+  const ruleType = getRuleType(property, media, descendants)
+  return `dss${ruleType}_${hashFn(property + descendants + media).toString(
+    36
+  )}-${hashFn(String(value)).toString(36)}`
 }
 
 const hyphenate = s => s.replace(/[A-Z]|^ms/g, '-$&').toLowerCase()
@@ -35,6 +37,20 @@ export function createRule(className, declaration, descendants, media) {
   const rule = selector + '{' + strigifyDeclaration(declaration) + '}'
   if (!media) return rule
   return media + '{' + rule + '}'
+}
+
+function getRuleType(prop, media, descendants) {
+  let name = ''
+  if (shortHandProperties.indexOf(prop) > -1) {
+    name = media ? 'mediaShorthand' : 'shorthand'
+  } else {
+    name = media ? 'mediaAtomic' : 'atomic'
+  }
+  // is a combinator selector eg :hover > &
+  if (descendants && descendants.substr(0, 2) !== '&:') {
+    name += 'Combinator'
+  }
+  return STYLE_GROUPS[name]
 }
 
 function normalizeValue(value) {

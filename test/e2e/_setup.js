@@ -11,7 +11,6 @@ global.testBefore = async () => {
     if (onLoad) {
       await onLoad()
     }
-    await page.addScriptTag({ url: 'http://localhost:5000/_helpers.js' })
     await page.addScriptTag({
       url: 'http://localhost:5000/dist/_styleSheet.js',
     })

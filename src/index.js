@@ -1,47 +1,25 @@
 import { create } from './factory'
-import { createSheet as createServerSheet, flush } from './server'
 
-const isBrowser = typeof window !== 'undefined'
-
-const createSheets = () => {
-  let style
-  let mediaStyle
-  let linkStyle = null
-
-  if (isBrowser) {
-    style = document.querySelector('#__style_sheet__')
-    if (!style) {
-      style = document.createElement('style')
-      document.head.appendChild(style)
-    }
-    mediaStyle = document.querySelector('#__style_sheet_media__')
-    if (!mediaStyle) {
-      mediaStyle = document.createElement('style')
-      document.head.appendChild(mediaStyle)
-    }
-    linkStyle = document.querySelector('#__style_sheet_extracted__')
-  } else {
-    style = { sheet: createServerSheet() }
-    mediaStyle = { sheet: createServerSheet() }
+function getSheet() {
+  if (typeof window === 'undefined') {
+    return null
   }
-
-  return {
-    get sheet() {
-      return style.sheet
-    },
-    get mediaSheet() {
-      return mediaStyle.sheet
-    },
-    linkSheet: linkStyle && linkStyle.sheet,
+  let element = document.querySelector('#__style_sheet__')
+  if (!element) {
+    element = document.createElement('style')
+    element.id = '__style_sheet__'
+    document.head.appendChild(element)
   }
+  return element.sheet
 }
 
-const sheets = createSheets()
-export const { StyleSheet, StyleResolver, setI18nManager } = create({ sheets })
+export const { StyleSheet, StyleResolver, setI18nManager } = create({
+  sheet: getSheet(),
+})
+
 export function flushServer() {
-  const sheets = StyleResolver.getStyleSheet()
-  return [
-    { id: '__style_sheet__', css: flush(sheets.sheet) },
-    { id: '__style_sheet_media__', css: flush(sheets.mediaSheet) },
-  ]
+  return {
+    id: '__style_sheet__',
+    css: StyleResolver.getStyleSheet().getTextContent(),
+  }
 }

@@ -1,15 +1,10 @@
 import test from 'ava'
 import { create as _create } from '../src/factory'
-import { createSheet } from '../src/server'
 import { i18n } from '../src/data'
 import { resolverToString } from './_utils'
 
 const create = opts =>
   _create({
-    sheets: {
-      sheet: createSheet(),
-      mediaSheet: createSheet(),
-    },
     i18n: {},
     ...opts,
   })
@@ -32,14 +27,14 @@ test('creates and resolves i18n styles', t => {
 
   t.deepEqual(result, {
     root: [
-      'dss_1b1ksw2-7qvd50|dss_107tc4v-oyp9nw',
-      'dss_1a9sfb9-xjidwl|dss_1a9sfb9-52pxm8',
-      'dss_j9ctud-1t7uh5u',
+      'dss10_1b1ksw2-7qvd50|dss10_107tc4v-oyp9nw',
+      'dss10_1a9sfb9-xjidwl|dss10_1a9sfb9-52pxm8',
+      'dss10_j9ctud-1t7uh5u',
     ],
   })
 
   const resolved = StyleResolver.resolve(result.root)
-  t.is(resolved, 'dss_j9ctud-1t7uh5u dss_1a9sfb9-52pxm8 dss_107tc4v-oyp9nw')
+  t.is(resolved, 'dss10_j9ctud-1t7uh5u dss10_1a9sfb9-52pxm8 dss10_107tc4v-oyp9nw')
   t.snapshot(resolverToString(StyleResolver))
 })
 
@@ -64,11 +59,11 @@ test('resolves i18n styles based on the i18n manager values', t => {
   })
 
   let resolved = StyleResolver.resolve(result.root)
-  t.is(resolved, 'dss_j9ctud-1t7uh5u dss_1a9sfb9-52pxm8 dss_107tc4v-oyp9nw')
+  t.is(resolved, 'dss10_j9ctud-1t7uh5u dss10_1a9sfb9-52pxm8 dss10_107tc4v-oyp9nw')
 
   doLeftAndRightSwapInRTL = false
   resolved = StyleResolver.resolve(result.root)
-  t.is(resolved, 'dss_j9ctud-1t7uh5u dss_1a9sfb9-xjidwl dss_1b1ksw2-7qvd50')
+  t.is(resolved, 'dss10_j9ctud-1t7uh5u dss10_1a9sfb9-xjidwl dss10_1b1ksw2-7qvd50')
 })
 
 test('resolves multiple rules', t => {
@@ -98,12 +93,12 @@ test('resolves multiple rules', t => {
   }).root
 
   let resolved = StyleResolver.resolve([one, two])
-  t.is(resolved, 'dss_1idvwo2-oyp9nw dss_xjidwl-oyp9nw')
+  t.is(resolved, 'dss10_1idvwo2-oyp9nw dss10_xjidwl-oyp9nw')
   t.snapshot(resolverToString(StyleResolver))
 
   doLeftAndRightSwapInRTL = false
   resolved = StyleResolver.resolve([one, two])
-  t.is(resolved, 'dss_1qlnxpd-7qvd50 dss_52pxm8-7qvd50')
+  t.is(resolved, 'dss10_1qlnxpd-7qvd50 dss10_52pxm8-7qvd50')
   t.snapshot(resolverToString(StyleResolver))
 })
 
