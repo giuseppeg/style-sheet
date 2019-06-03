@@ -145,7 +145,7 @@ function decodeGroupRule(cssRule) {
 
 function getOrderedGroups(obj) {
   return Object.keys(obj)
-    .map(k => Number(k))
+    .map(Number)
     .sort((a, b) => (a > b ? 1 : -1))
 }
 
