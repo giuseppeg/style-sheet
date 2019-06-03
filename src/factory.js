@@ -55,7 +55,6 @@ function concatClassName(dest, className) {
 }
 
 function createStyleResolver(sheet, rules, opts) {
-  const serverStyles = '' // fromServer(sheets)
   let resolved = {}
   let injected = {}
 
@@ -112,7 +111,7 @@ function createStyleResolver(sheet, rules, opts) {
           resolvedClassName = result.className
 
           if (result.shouldInject && !injected[className]) {
-            if (rule && serverStyles.indexOf(className) === -1) {
+            if (rule) {
               sheet.insertRule(rule, result.group)
               if (i18nRules && !isBrowser) {
                 const i18nIndexInverse = i18nIndex ? 0 : 1
