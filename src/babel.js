@@ -17,7 +17,6 @@ export default function(babel) {
     visitor: {
       Program: {
         exit(path, state) {
-          console.log(state.hasStyleSheetImport, state.needsStyleSheetImport)
           if (!state.hasStyleSheetImport && state.needsStyleSheetImport) {
             const { types: t } = babel
             const importSpecifier = t.identifier(
