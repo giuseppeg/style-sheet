@@ -1,7 +1,7 @@
 import evaluateSimple from 'babel-helper-evaluate-path'
 import evaluateComplex from 'linaria/lib/babel/evaluate'
+import jsx from '@babel/plugin-syntax-jsx'
 import { create } from './factory'
-
 const { StyleSheet, StyleResolver } = create()
 
 // This function returns the extracted CSS to save in a .css file.
@@ -13,7 +13,44 @@ export function getCss() {
 export default function(babel) {
   return {
     name: 'style-sheet/babel',
+    inherits: jsx,
     visitor: {
+      JSXAttribute(path, state) {
+        if (path.node.name.name !== 'css') {
+          return
+        }
+
+        const value = path.get('value')
+        if (!value.isJSXExpressionContainer()) {
+          return
+        }
+
+        const expression = value.get('expression')
+
+        if (!expression.isPure()) {
+          return
+        }
+
+        const { types: t } = babel
+        const cloneNode = t.cloneNode || t.cloneDeep
+        const importName = state.opts.importName || 'StyleSheet'
+        const replacement = t.callExpression(
+          t.memberExpression(
+            t.identifier(importName),
+            t.identifier('create')
+          ),
+          [
+            t.objectExpression([
+              t.ObjectProperty(
+                t.identifier('__cssProp'),
+                cloneNode(expression.node)
+              ),
+            ]),
+          ]
+        )
+        expression.replaceWith(replacement)
+        expression.hoist()
+      },
       ImportDeclaration(path, state) {
         const packageName = state.opts.packageName || 'style-sheet'
         if (path.node.source.value !== packageName) {
