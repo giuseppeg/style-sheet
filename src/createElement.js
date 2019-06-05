@@ -8,6 +8,9 @@ export default function createCreateElement({ StyleSheet, StyleResolver }) {
       let rules = []
       if (Array.isArray(css)) {
         rules = css.map(rule => StyleSheet.create({ rule }).rule)
+      }
+      if (css.__cssProp) {
+        rules.push(css.__cssProp)
       } else {
         rules.push(StyleSheet.create({ rule: css }).rule)
       }

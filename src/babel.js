@@ -15,6 +15,22 @@ export default function(babel) {
     name: 'style-sheet/babel',
     inherits: jsx,
     visitor: {
+      Program: {
+        exit(path, state) {
+          console.log(state.hasStyleSheetImport, state.needsStyleSheetImport)
+          if (!state.hasStyleSheetImport && state.needsStyleSheetImport) {
+            const { types: t } = babel
+            const importSpecifier = t.identifier(
+              state.opts.importName || 'StyleSheet'
+            )
+            const importDeclaration = t.importDeclaration(
+              [t.importSpecifier(importSpecifier, importSpecifier)],
+              t.stringLiteral(state.opts.packageName || 'style-sheet')
+            )
+            path.node.body.unshift(importDeclaration)
+          }
+        },
+      },
       JSXAttribute(path, state) {
         if (path.node.name.name !== 'css') {
           return
@@ -26,7 +42,6 @@ export default function(babel) {
         }
 
         const expression = value.get('expression')
-
         if (!expression.isPure()) {
           return
         }
@@ -35,10 +50,7 @@ export default function(babel) {
         const cloneNode = t.cloneNode || t.cloneDeep
         const importName = state.opts.importName || 'StyleSheet'
         const replacement = t.callExpression(
-          t.memberExpression(
-            t.identifier(importName),
-            t.identifier('create')
-          ),
+          t.memberExpression(t.identifier(importName), t.identifier('create')),
           [
             t.objectExpression([
               t.ObjectProperty(
@@ -49,6 +61,7 @@ export default function(babel) {
           ]
         )
         expression.replaceWith(replacement)
+        processReferencePath(babel, expression, state)
         expression.hoist()
       },
       ImportDeclaration(path, state) {
@@ -66,6 +79,8 @@ export default function(babel) {
         if (!specifier) {
           return
         }
+
+        state.hasStyleSheetImport = true
 
         // Find all the references to StyleSheet.create.
         const binding = path.scope.getBinding(specifier.node.local.name)
@@ -137,6 +152,7 @@ function processReferencePath(babel, path, state) {
 
   // If we couldn't resolve anything we exit.
   if (extractableProperties.length === 0) {
+    state.needsStyleSheetImport = true
     return
   }
 
@@ -154,6 +170,7 @@ function processReferencePath(babel, path, state) {
   //    })
   //   })
   if (properties.length !== extractableProperties.length) {
+    state.needsStyleSheetImport = true
     extractedStylesObjectLiteral.properties.push(
       t.spreadElement(cloneNode(path.node))
     )

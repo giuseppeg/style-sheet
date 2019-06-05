@@ -217,7 +217,7 @@ To use this feature you need to `import { createElement } from 'style-sheet'` an
 /* @jsx createElement */
 
 import React from 'react'
-import { StyleSheet, StyleResolver, createElement } from 'style-sheet'
+import { createElement } from 'style-sheet'
 
 export default ({ children }) => (
   <div css={{ color: 'red' }}>{children}</div>
@@ -251,8 +251,6 @@ or if you use `@babel/preset-react`
 }
 ```
 
-Note that currently the `css` props works only at runtime and styles defined with it cannot be extracted to static. We are going to add extraction soon though, it is just a matter of (free) time!
-
 ## Contributing
 
 Since this is a side project and we don't want to burn out, we decided to disable the GitHub issues.
@@ -269,7 +267,6 @@ Please submit a pull request with an RFC where you explain the why and the how y
 
 Feel free to contact [me](https://twitter.com/giuseppegurgone) if you want to help with any of the following tasks (sorted in terms on priority/dependency):
 
-- [ ] Add hoisting and static extraction for the `css` prop
 - [ ] Add support for `StyleSheet.createPrimitive` (or `createRule`) to generate non-atomic rules that can be used for the primitives' base styling (and avoid too many atomic classes on elements)
 - [ ] Find a better/smaller deterministic name scheme for classes (right now it is `dss_hashedProperty-hashedValue`)
 - [ ] Add dev only debug class names and support for source maps

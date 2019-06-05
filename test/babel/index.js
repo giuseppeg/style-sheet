@@ -16,3 +16,9 @@ test('simple', async t => {
   t.snapshot(code)
   t.snapshot(getCss())
 })
+
+test('missing import', async t => {
+  const { code } = await transform('./fixtures/missingImport.js')
+  t.snapshot(code)
+  t.snapshot(getCss())
+})

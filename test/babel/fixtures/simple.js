@@ -32,3 +32,4 @@ const styles2 = StyleSheet.create({
 const ComponentStatic = () => <div css={{ color: 'red' }} />
 const ComponentConstant = () => <div css={{ marginTop }} />
 const ComponentConstantImported = () => <div css={{ marginTop: TEST }} />
+const ComponentDynamic = ({ margin }) => <div css={{ color: 'red', margin }} />
