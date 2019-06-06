@@ -52,7 +52,7 @@ export default function(babel) {
           t.memberExpression(t.identifier(importName), t.identifier('create')),
           [
             t.objectExpression([
-              t.ObjectProperty(
+              t.objectProperty(
                 t.identifier('__cssProp'),
                 cloneNode(expression.node)
               ),

@@ -22,3 +22,11 @@ test('missing import', async t => {
   t.snapshot(code)
   t.snapshot(getCss())
 })
+
+test('missing import, transformed jsx', async t => {
+  const { code } = await transform('./fixtures/missingImport.js', {
+    plugins: [plugin, '@babel/plugin-transform-react-jsx'],
+  })
+  t.snapshot(code)
+  t.snapshot(getCss())
+})
