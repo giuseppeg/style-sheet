@@ -40,28 +40,50 @@ export default function(babel) {
           return
         }
 
-        const expression = value.get('expression')
-        if (!expression.isPure()) {
-          return
-        }
+        let expression = value.get('expression')
 
         const { types: t } = babel
         const cloneNode = t.cloneNode || t.cloneDeep
         const importName = state.opts.importName || 'StyleSheet'
-        const replacement = t.callExpression(
-          t.memberExpression(t.identifier(importName), t.identifier('create')),
-          [
-            t.objectExpression([
-              t.objectProperty(
-                t.identifier('__cssProp'),
-                cloneNode(expression.node)
+
+        let isExpressionArray = false
+        let expressions
+        if (expression.isArrayExpression()) {
+          isExpressionArray = true
+          expressions = expression.get('elements')
+        } else {
+          expressions = [expression]
+        }
+
+        const hoisted = expressions
+          .map(expression => {
+            if (!expression.isPure()) {
+              return
+            }
+
+            const replacement = t.callExpression(
+              t.memberExpression(
+                t.identifier(importName),
+                t.identifier('create')
               ),
-            ]),
-          ]
-        )
-        expression.replaceWith(replacement)
-        processReferencePath(babel, expression, state)
-        expression.hoist()
+              [
+                t.objectExpression([
+                  t.objectProperty(
+                    t.identifier('__cssProp'),
+                    cloneNode(expression.node)
+                  ),
+                ]),
+              ]
+            )
+            expression.replaceWith(replacement)
+            processReferencePath(babel, expression, state)
+            return expression.hoist()
+          })
+          .filter(Boolean)
+
+        if (isExpressionArray && hoisted.length === expressions.length) {
+          expression.hoist()
+        }
       },
       ImportDeclaration(path, state) {
         const packageName = state.opts.packageName || 'style-sheet'
