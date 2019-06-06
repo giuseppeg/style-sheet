@@ -94,9 +94,9 @@ export default function createOrderedCSSStyleSheet(sheet) {
       groups = {}
       selectors = {}
       if (sheet != null) {
-         Array.prototype.forEach.call(sheet.cssRules, function (_, i) {
-           sheet.deleteRule(i)
-         })
+        Array.prototype.forEach.call(sheet.cssRules, function(_, i) {
+          sheet.deleteRule(i)
+        })
       }
       return textContent
     },
