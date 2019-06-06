@@ -7,7 +7,7 @@ const { StyleSheet, StyleResolver } = create()
 // This function returns the extracted CSS to save in a .css file.
 // It must be called after all the files are processed by Babel.
 export function getCss() {
-  return StyleResolver.getStyleSheet().getTextContent()
+  return StyleResolver.getStyleSheet().flush()
 }
 
 export default function(babel) {

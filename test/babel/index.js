@@ -12,21 +12,27 @@ const transform = (file, opts = {}) =>
   })
 
 test('simple', async t => {
+  console.log('1')
   const { code } = await transform('./fixtures/simple.js')
   t.snapshot(code)
   t.snapshot(getCss())
+  console.log('1')
 })
 
 test('missing import', async t => {
+  console.log('2')
   const { code } = await transform('./fixtures/missingImport.js')
   t.snapshot(code)
   t.snapshot(getCss())
+  console.log('2')
 })
 
 test('missing import, transformed jsx', async t => {
+  console.log('3')
   const { code } = await transform('./fixtures/missingImport.js', {
     plugins: [plugin, '@babel/plugin-transform-react-jsx'],
   })
   t.snapshot(code)
   t.snapshot(getCss())
+  console.log('3')
 })
