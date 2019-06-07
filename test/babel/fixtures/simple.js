@@ -28,3 +28,11 @@ const styles2 = StyleSheet.create({
     display: 'flex'
   },
 })
+
+const ComponentStatic = () => <div css={{ color: 'red' }} />
+const ComponentStaticArray = () => <div css={[{ color: 'red' }, { marginTop }]} />
+const ComponentConstant = () => <div css={{ marginTop }} />
+const ComponentConstantImported = () => <div css={{ marginTop: TEST }} />
+const ComponentDynamic = ({ margin }) => <div css={{ color: 'red', margin }} />
+const ComponentDynamicArray = ({ margin, padding }) => <div css={[{ margin }, { color: 'red', padding }]} />
+const ComponentMixedStaticDynamicArray = ({ margin }) => <div css={[{ margin }, { color: 'red' }]} />

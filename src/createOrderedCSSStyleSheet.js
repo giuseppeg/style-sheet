@@ -21,8 +21,8 @@
  * https://gist.github.com/necolas/aa0c37846ad6bd3b05b727b959e82674
  */
 export default function createOrderedCSSStyleSheet(sheet) {
-  const groups = {}
-  const selectors = {}
+  let groups = {}
+  let selectors = {}
 
   /**
    * Hydrate approximate record from any existing rules in the sheet.
@@ -73,15 +73,32 @@ export default function createOrderedCSSStyleSheet(sheet) {
     return isInserted
   }
 
+  function getTextContent() {
+    return getOrderedGroups(groups).reduce(function(text, group, index) {
+      const rules = groups[group].rules
+      return text + (index > 0 ? '\n' : '') + rules.join('\n')
+    }, '')
+  }
+
   const OrderedCSSStyleSheet = {
     /**
      * The textContent of the style sheet.
      */
-    getTextContent() {
-      return getOrderedGroups(groups).reduce(function(text, group, index) {
-        const rules = groups[group].rules
-        return text + (index > 0 ? '\n' : '') + rules.join('\n')
-      }, '')
+    getTextContent,
+
+    /**
+     * Returns the textContent of the style sheet and removes all the rules from it.
+     */
+    flush() {
+      const textContent = getTextContent()
+      groups = {}
+      selectors = {}
+      if (sheet != null) {
+        Array.prototype.forEach.call(sheet.cssRules, function(_, i) {
+          sheet.deleteRule(i)
+        })
+      }
+      return textContent
     },
 
     /**

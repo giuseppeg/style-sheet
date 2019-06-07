@@ -11,8 +11,16 @@ const transform = (file, opts = {}) =>
     ...opts,
   })
 
-test('simple', async t => {
-  const { code } = await transform('./fixtures/simple.js')
-  t.snapshot(code)
-  t.snapshot(getCss())
+test('plugin', async t => {
+  let { code } = await transform('./fixtures/simple.js')
+  t.snapshot(code, 'simple - code')
+  t.snapshot(getCss(), 'simple - css')
+  ;({ code } = await transform('./fixtures/missingImport.js'))
+  t.snapshot(code, 'missing import - code')
+  t.snapshot(getCss(), 'missing import - css')
+  ;({ code } = await transform('./fixtures/missingImport.js', {
+    plugins: [plugin, '@babel/plugin-transform-react-jsx'],
+  }))
+  t.snapshot(code, 'missing import, transformed jsx - code')
+  t.snapshot(getCss(), 'missing import, transformed jsx - css')
 })

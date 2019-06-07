@@ -7,7 +7,14 @@ export default function createCreateElement({ StyleSheet, StyleResolver }) {
       const { css, className, ...rest } = props
       let rules = []
       if (Array.isArray(css)) {
-        rules = css.map(rule => StyleSheet.create({ rule }).rule)
+        rules = css.map(rule => {
+          if (rule.__cssProp) {
+            return rule.__cssProp
+          }
+          return StyleSheet.create({ rule }).rule
+        })
+      } else if (css.__cssProp) {
+        rules.push(css.__cssProp)
       } else {
         rules.push(StyleSheet.create({ rule: css }).rule)
       }
@@ -15,7 +22,7 @@ export default function createCreateElement({ StyleSheet, StyleResolver }) {
         // className takes precedence over the css prop
         // this allows parent components to style the current one.
         rules.push(
-          className.indexOf('dss_') === -1 ? [className] : className.split(' ')
+          /dss\d+_/.test(className) ? className.split(' ') : [className]
         )
       }
       rest.className = StyleResolver.resolve(rules)
