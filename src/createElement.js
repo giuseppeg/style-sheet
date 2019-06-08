@@ -1,10 +1,17 @@
 // eslint-disable-next-line import/no-unresolved
 import React from 'react'
 
-export default function createCreateElement({ StyleSheet, StyleResolver }) {
+export default function createCreateElement(
+  { StyleSheet, StyleResolver },
+  cssPropName = 'css'
+) {
   return function(tag, props, ...children) {
-    if (props && props.css) {
-      const { css, className, ...rest } = props
+    if (props && props[cssPropName]) {
+      const css = props[cssPropName]
+      delete props[cssPropName]
+      const className = props.className
+      delete props.className
+
       let rules = []
       if (Array.isArray(css)) {
         rules = css.map(rule => {
@@ -25,8 +32,7 @@ export default function createCreateElement({ StyleSheet, StyleResolver }) {
           /dss\d+_/.test(className) ? className.split(' ') : [className]
         )
       }
-      rest.className = StyleResolver.resolve(rules)
-      return React.createElement(tag, rest, ...children)
+      props.className = StyleResolver.resolve(rules)
     }
     return React.createElement(tag, props, ...children)
   }
