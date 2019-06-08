@@ -16,10 +16,3 @@ function getSheet() {
 export const { StyleSheet, StyleResolver, setI18nManager } = create({
   sheet: getSheet(),
 })
-
-export function flushServer() {
-  return {
-    id: '__style_sheet__',
-    css: StyleResolver.getStyleSheet().getTextContent(),
-  }
-}
