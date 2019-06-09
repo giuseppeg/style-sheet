@@ -1,3 +1,4 @@
+/* global Blob, Worker, URL, module */
 import ErrorStackParser from 'error-stack-parser'
 
 export function createSourceMapsEngine({
