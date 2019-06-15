@@ -267,7 +267,6 @@ Please submit a pull request with an RFC where you explain the why and the how y
 
 Feel free to contact [me](https://twitter.com/giuseppegurgone) if you want to help with any of the following tasks (sorted in terms on priority/dependency):
 
-- [ ] Add dev only debug class names and support for source maps
 - [ ] Find a better/smaller deterministic name scheme for classes (right now it is `dss_hashedProperty-hashedValue`)
 - [ ] Consider adding support for i18n properties like `marginHorizontal`
 - [ ] Add support for `StyleSheet.createPrimitive` (or `createRule`) to generate non-atomic rules that can be used for the primitives' base styling (and avoid too many atomic classes on elements)
