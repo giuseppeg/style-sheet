@@ -1,11 +1,19 @@
 import compile from './compile'
 import validate from './validate'
 import createOrderedCSSStyleSheet from './createOrderedCSSStyleSheet'
+import { createSourceMapsEngine } from './source-maps'
 
 const isBrowser = typeof window !== 'undefined'
+const isProd = process.env.NODE_ENV === 'production'
+const isTest = process.env.NODE_ENV === 'test'
 
 function createStyleSheet(rules, opts) {
   const cache = typeof Map === 'undefined' ? null : new Map()
+  let sourceMapsEngine
+  if (!isProd && !isTest && !isBrowser && typeof Worker !== 'undefined') {
+    sourceMapsEngine = createSourceMapsEngine()
+  }
+
   return {
     create: styles => {
       if (cache) {
@@ -18,12 +26,22 @@ function createStyleSheet(rules, opts) {
 
       for (const token in styles) {
         const rule = styles[token]
-        if (process.env.NODE_ENV !== 'production') {
+        if (!isProd) {
           validate(rule, null)
         }
         const compiled = compile(rule, opts)
-        locals[token] = Object.keys(compiled)
         Object.assign(rules, compiled)
+
+        locals[token] = Object.keys(compiled)
+
+        // In dev add source maps
+        if (!isProd && sourceMapsEngine) {
+          locals[token].unshift(
+            sourceMapsEngine.create((prefix, id) =>
+              opts.sourceMaps.className({ prefix, key: token, id })
+            )
+          )
+        }
       }
 
       if (cache) {
@@ -148,7 +166,7 @@ export function create(options = {}) {
   let i18n
   function setI18nManager(manager) {
     i18n = manager
-    if (i18n && process.env.NODE_ENV !== 'production') {
+    if (i18n && !isProd) {
       if (typeof i18n.isRTL !== 'boolean') {
         throw new Error('i18n.isRTL must be a boolean.')
       }
@@ -166,6 +184,15 @@ export function create(options = {}) {
     get i18n() {
       return i18n
     },
+  }
+
+  if (!isProd) {
+    opts.sourceMaps = Object.assign(
+      {
+        className: ({ prefix, key, id }) => `${prefix}__${key}-${id}`,
+      },
+      options.sourceMaps || {}
+    )
   }
 
   return {
