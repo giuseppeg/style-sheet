@@ -5,11 +5,12 @@ import { createSourceMapsEngine } from './source-maps'
 
 const isBrowser = typeof window !== 'undefined'
 const isProd = process.env.NODE_ENV === 'production'
+const isTest = process.env.NODE_ENV === 'test'
 
 function createStyleSheet(rules, opts) {
   const cache = typeof Map === 'undefined' ? null : new Map()
   let sourceMapsEngine
-  if (!isProd && typeof Worker !== 'undefined') {
+  if (!isProd && !isTest && typeof Worker !== 'undefined') {
     sourceMapsEngine = createSourceMapsEngine()
   }
 
@@ -36,7 +37,9 @@ function createStyleSheet(rules, opts) {
         // In dev add source maps
         if (!isProd && sourceMapsEngine) {
           locals[token].unshift(
-            sourceMapsEngine.create((prefix, id) => `${prefix}__${token}-${id}`)
+            sourceMapsEngine.create(
+              opts.sourceMaps.className({ prefix, key: token, id })
+            )
           )
         }
       }
@@ -181,6 +184,15 @@ export function create(options = {}) {
     get i18n() {
       return i18n
     },
+  }
+
+  if (!isProd) {
+    opts.sourceMaps = Object.assign(
+      {
+        className: ({ prefix, key, id }) => `${prefix}__${key}-${id}`,
+      },
+      options.sourceMaps || {}
+    )
   }
 
   return {

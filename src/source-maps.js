@@ -13,6 +13,8 @@ export function createSourceMapsEngine({
     id: 'init_wasm',
     url: `${baseUrl}/mappings.wasm`,
   })
+  const style = document.createElement('style')
+  document.head.appendChild(style)
   worker.postMessage({
     id: 'set_render_interval',
     interval: renderInterval,
@@ -24,12 +26,11 @@ export function createSourceMapsEngine({
       }
     })
   }
+
   worker.onmessage = msg => {
     const { id, css } = msg.data
     if (id === 'render_css' && css) {
-      const style = document.createElement('style')
       style.appendChild(document.createTextNode(css))
-      document.head.appendChild(style)
     }
   }
 
