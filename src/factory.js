@@ -10,7 +10,7 @@ const isTest = process.env.NODE_ENV === 'test'
 function createStyleSheet(rules, opts) {
   const cache = typeof Map === 'undefined' ? null : new Map()
   let sourceMapsEngine
-  if (!isProd && !isTest && typeof Worker !== 'undefined') {
+  if (!isProd && !isTest && !isBrowser && typeof Worker !== 'undefined') {
     sourceMapsEngine = createSourceMapsEngine()
   }
 
@@ -37,7 +37,7 @@ function createStyleSheet(rules, opts) {
         // In dev add source maps
         if (!isProd && sourceMapsEngine) {
           locals[token].unshift(
-            sourceMapsEngine.create(
+            sourceMapsEngine.create((prefix, id) =>
               opts.sourceMaps.className({ prefix, key: token, id })
             )
           )
