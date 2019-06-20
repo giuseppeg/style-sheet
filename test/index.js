@@ -56,6 +56,20 @@ test('resolves &', t => {
   t.snapshot(resolverToString(StyleResolver))
 })
 
+test('can use :hover:active', t => {
+  const { StyleSheet, StyleResolver } = create()
+  const result = StyleSheet.create({
+    root: {
+      '&:hover:active': {
+        color: 'green',
+      },
+    },
+  })
+  t.snapshot(result.root)
+  StyleResolver.resolve(result.root)
+  t.snapshot(resolverToString(StyleResolver))
+})
+
 test('resolves non unitless numbers', t => {
   const { StyleSheet, StyleResolver } = create()
   const result = StyleSheet.create({
