@@ -269,7 +269,7 @@ test('combinator selectors are more specific than states', async t => {
   await testAfter(context)
 })
 
-test('resolves pseudo classes deterministically', async t => {
+test.only('resolves pseudo classes deterministically', async t => {
   const context = await testBefore()
   const { gotoPage, page } = context
 
@@ -320,7 +320,11 @@ test('resolves pseudo classes deterministically', async t => {
         'color'
       )
     )
-    t.is(colorActive, 'rgb(255, 255, 255)', 'the color should be white on :active')
+    t.is(
+      colorActive,
+      'rgb(255, 255, 255)',
+      'the color should be white on :active'
+    )
   })
 
   await testAfter(context)

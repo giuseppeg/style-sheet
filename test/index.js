@@ -60,6 +60,12 @@ test('can use :hover:active', t => {
   const { StyleSheet, StyleResolver } = create()
   const result = StyleSheet.create({
     root: {
+      '&:active': {
+        color: 'white',
+      },
+      '&:hover': {
+        color: 'green',
+      },
       '&:hover:active': {
         color: 'green',
       },
@@ -67,6 +73,7 @@ test('can use :hover:active', t => {
   })
   t.snapshot(result.root)
   StyleResolver.resolve(result.root)
+  console.log(resolverToString(StyleResolver))
   t.snapshot(resolverToString(StyleResolver))
 })
 

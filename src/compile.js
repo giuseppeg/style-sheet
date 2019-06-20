@@ -39,6 +39,18 @@ export function createRule(className, declaration, descendants, media) {
   return media + '{' + rule + '}'
 }
 
+const order = {
+  pseudo: [
+    'link',
+    'visited',
+    'hover',
+    'focus-within',
+    'focus-visible',
+    'focus',
+    'active',
+  ],
+}
+
 function getRuleType(prop, media, descendants) {
   let name = ''
   if (shortHandProperties.indexOf(prop) > -1) {
@@ -46,11 +58,26 @@ function getRuleType(prop, media, descendants) {
   } else {
     name = media ? 'mediaAtomic' : 'atomic'
   }
+  let subGroup = 0
   // is a combinator selector eg :hover > &
-  if (descendants && descendants.substr(0, 2) !== '&:') {
-    name += 'Combinator'
+  if (descendants) {
+    let subGroupPart
+    if (descendants.substr(0, 2) !== '&:') {
+      name += 'Combinator'
+      subGroupPart = descendants.slice(1).split(/\s*[+>~]\s*/g)[0]
+    } else {
+      subGroupPart = descendants.slice(2)
+    }
+    const index = order.pseudo.indexOf(subGroupPart)
+    if (index > -1) {
+      subGroup = index + 1
+    }
   }
-  return STYLE_GROUPS[name]
+
+  const cls =
+    subGroup > 0 ? STYLE_GROUPS[name] + '\\.' + subGroup : STYLE_GROUPS[name]
+  console.log(cls)
+  return cls
 }
 
 function normalizeValue(value) {
