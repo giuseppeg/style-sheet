@@ -1,4 +1,4 @@
-/* global testBefore:readonly testAfter:readonly styleSheet:readonly getComputedStyle:readonly  */
+/* global testBefore:readonly testAfter:readonly styleSheet:readonly getComputedStyle:readonly setTimeout */
 const test = require('ava')
 // eslint-disable-next-line import/no-unassigned-import
 require('./_setup')
@@ -269,7 +269,7 @@ test('combinator selectors are more specific than states', async t => {
   await testAfter(context)
 })
 
-test.only('resolves pseudo classes deterministically', async t => {
+test('resolves pseudo classes deterministically', async t => {
   const context = await testBefore()
   const { gotoPage, page } = context
 
@@ -341,4 +341,9 @@ async function active(page, selector, doSomething) {
   await page.mouse.down()
   await doSomething()
   await page.mouse.up()
+}
+
+// eslint-disable-next-line no-unused-vars
+function sleep(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms))
 }

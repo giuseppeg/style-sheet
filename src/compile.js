@@ -30,7 +30,7 @@ const strigifyDeclaration = dec => {
   return stringified
 }
 export function createRule(className, declaration, descendants, media) {
-  const cls = '.' + className
+  const cls = '.' + className.replace('.', '\\.')
   const selector = descendants
     ? descendants.replace(/^&/, cls).replace(/&/g, cls)
     : cls
@@ -59,9 +59,9 @@ function getRuleType(prop, media, descendants) {
     name = media ? 'mediaAtomic' : 'atomic'
   }
   let subGroup = 0
-  // is a combinator selector eg :hover > &
   if (descendants) {
     let subGroupPart
+    // is a combinator selector eg :hover > &
     if (descendants.substr(0, 2) !== '&:') {
       name += 'Combinator'
       subGroupPart = descendants.slice(1).split(/\s*[+>~]\s*/g)[0]
@@ -74,10 +74,7 @@ function getRuleType(prop, media, descendants) {
     }
   }
 
-  const cls =
-    subGroup > 0 ? STYLE_GROUPS[name] + '\\.' + subGroup : STYLE_GROUPS[name]
-  console.log(cls)
-  return cls
+  return subGroup > 0 ? STYLE_GROUPS[name] + '.' + subGroup : STYLE_GROUPS[name]
 }
 
 function normalizeValue(value) {
