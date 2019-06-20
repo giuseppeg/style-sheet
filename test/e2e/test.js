@@ -268,3 +268,73 @@ test('combinator selectors are more specific than states', async t => {
 
   await testAfter(context)
 })
+
+test('resolves pseudo classes deterministically', async t => {
+  const context = await testBefore()
+  const { gotoPage, page } = context
+
+  await gotoPage('test.html')
+
+  const colorIdle = await page.evaluate(() => {
+    const { StyleSheet, StyleResolver } = styleSheet
+
+    const styles = StyleSheet.create({
+      elsewhere: {
+        '&:active': {
+          color: 'white',
+        },
+      },
+      test: {
+        color: 'blue',
+        '&:hover': {
+          color: 'red',
+        },
+        '&:active': {
+          color: 'white',
+          backgroundColor: 'green',
+        },
+      },
+    })
+
+    // Somewhere in the app the active styles have been injected already.
+    StyleResolver.resolve(styles.elsewhere)
+
+    const root = document.querySelector('#root')
+    const button = root.appendChild(document.createElement('button'))
+    button.textContent = 'test'
+    button.className = StyleResolver.resolve(styles.test)
+    return getComputedStyle(button).getPropertyValue('color')
+  })
+
+  t.is(colorIdle, 'rgb(0, 0, 255)')
+
+  await page.hover('button')
+  const colorHover = await page.evaluate(() =>
+    getComputedStyle(document.querySelector('button')).getPropertyValue('color')
+  )
+  t.is(colorHover, 'rgb(255, 0, 0)')
+
+  await active(page, 'button', async function() {
+    const colorActive = await page.evaluate(() =>
+      getComputedStyle(document.querySelector('button')).getPropertyValue(
+        'color'
+      )
+    )
+    t.is(colorActive, 'rgb(255, 255, 255)', 'the color should be white on :active')
+  })
+
+  await testAfter(context)
+})
+
+async function active(page, selector, doSomething) {
+  const el = await page.$(selector)
+  const { top, left } = await page.evaluate(el => {
+    el.scrollIntoViewIfNeeded()
+    const { top, left } = el.getBoundingClientRect()
+    return { top, left }
+  }, el)
+  await page.mouse.move(top + 1, left + 1)
+  await page.mouse.down()
+  await doSomething()
+  await page.mouse.up()
+}
