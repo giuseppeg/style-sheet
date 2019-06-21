@@ -77,6 +77,7 @@ function concatClassName(dest, className) {
 function createStyleResolver(sheet, rules, opts) {
   let resolved = {}
   let injected = {}
+  let mq = []
 
   return {
     getStyleSheet() {

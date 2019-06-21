@@ -45,7 +45,7 @@ export default function createOrderedCSSStyleSheet(sheet) {
     })
   }
 
-  function sheetInsert(sheet, group, text) {
+  function sheetInsert(sheet, group, text, index) {
     const orderedGroups = getOrderedGroups(groups)
     const groupIndex = orderedGroups.indexOf(group)
     const nextGroupIndex = groupIndex + 1
@@ -53,7 +53,9 @@ export default function createOrderedCSSStyleSheet(sheet) {
     // Insert rule before the next group, or at the end of the stylesheet
     const position =
       nextGroup != null && groups[nextGroup].start != null
-        ? groups[nextGroup].start
+        ? groups[nextGroup].start - typeof index === 'number'
+          ? groups[group].rules.length - index
+          : 0
         : sheet.cssRules.length
     const isInserted = insertRuleAt(sheet, text, position)
 
@@ -104,7 +106,7 @@ export default function createOrderedCSSStyleSheet(sheet) {
     /**
      * Insert a rule into the style sheet
      */
-    insertRule(cssText, groupValue) {
+    insertRule(cssText, groupValue, index) {
       const group = Number(groupValue)
 
       if (isNaN(group)) {
@@ -129,16 +131,28 @@ export default function createOrderedCSSStyleSheet(sheet) {
       // making cssText more likely to be different from what was inserted.
       const selectorText = getSelectorText(cssText)
       if (selectorText != null && selectors[selectorText] == null) {
+        const hasIndex = typeof index === 'number'
         // Update the internal records.
         selectors[selectorText] = true
-        groups[group].rules.push(cssText)
+        if (hasIndex) {
+          if (index > groups[group].rules.length - 1) {
+            throw new Error(`index ${index} out of bound for group ${group}`)
+          }
+          groups[group].rules.splice(index + 1, 0, cssText)
+        } else {
+          groups[group].rules.push(cssText)
+        }
         // Update CSSOM.
         if (sheet != null) {
-          const isInserted = sheetInsert(sheet, group, cssText)
+          const isInserted = sheetInsert(sheet, group, cssText, index)
           if (!isInserted) {
             // Revert internal record change if a rule was rejected (e.g.,
             // unrecognized pseudo-selector)
-            groups[group].rules.pop()
+            if (hasIndex) {
+              groups[group].rules.splice(index + 1, 1)
+            } else {
+              groups[group].rules.pop()
+            }
           }
         }
       }
@@ -170,8 +184,9 @@ const pattern = /\s*([,])\s*/g
 function getSelectorText(cssText) {
   const split = cssText.split('{')
   let selector = split[0].trim()
-  selector = selector.startsWith('@media') ? split[1].trim() : selector
-  selector = selector.trim()
+  if (selector.startsWith('@media')) {
+    selector = split[1].trim()
+  }
   return selector !== '' ? selector.replace(pattern, '$1') : null
 }
 

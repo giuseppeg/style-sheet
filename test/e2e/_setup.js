@@ -1,7 +1,7 @@
 /* global global:readonly */
 const puppeteer = require('puppeteer')
 
-global.debug = true
+global.debug = false
 
 global.testBefore = async () => {
   const browser = await puppeteer.launch({ headless: !global.debug })
