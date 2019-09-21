@@ -45,3 +45,37 @@ test('inserts groups in order', t => {
 
   t.snapshot(sheet.getTextContent())
 })
+
+test('inserts at the end of the group when no index is provided', t => {
+  const sheet = create()
+  sheet.insertRule('.test1 { color: red }', 2)
+  sheet.insertRule('.test2 { color: green }', 2)
+  t.snapshot(sheet.getTextContent())
+})
+
+test('inserts at a specific index in the group', t => {
+  const sheet = create()
+  sheet.insertRule('.group3 { color: orange }', 3)
+  sheet.insertRule('.group4 { display: block }', 4)
+  sheet.insertRule('.test1 { color: red }', 2)
+  sheet.insertRule('.test2 { color: green }', 2)
+  sheet.insertRule('.test3 { color: yellow }', 2, 1)
+  sheet.insertRule('.test4 { color: hotpink }', 2, 1)
+  sheet.insertRule('.nextGroupStillWorks { color: papaya }', 3)
+  t.snapshot(sheet.getTextContent())
+})
+
+test('throws when the index is out of bound', t => {
+  const sheet = create()
+  t.throws(() => {
+    sheet.insertRule('.test1 { color: red }', 2, 1)
+  })
+})
+
+test('not throws when the index is valid', t => {
+  const sheet = create()
+  t.notThrows(() => {
+    sheet.insertRule('.test1 { color: red }', 2, 0)
+  })
+  t.snapshot(sheet.getTextContent())
+})

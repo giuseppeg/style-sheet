@@ -30,13 +30,25 @@ const strigifyDeclaration = dec => {
   return stringified
 }
 export function createRule(className, declaration, descendants, media) {
-  const cls = '.' + className
+  const cls = '.' + className.replace('.', '\\.')
   const selector = descendants
     ? descendants.replace(/^&/, cls).replace(/&/g, cls)
     : cls
   const rule = selector + '{' + strigifyDeclaration(declaration) + '}'
   if (!media) return rule
   return media + '{' + rule + '}'
+}
+
+const order = {
+  pseudo: [
+    'link',
+    'visited',
+    'hover',
+    'focus-within',
+    'focus-visible',
+    'focus',
+    'active',
+  ],
 }
 
 function getRuleType(prop, media, descendants) {
@@ -46,11 +58,23 @@ function getRuleType(prop, media, descendants) {
   } else {
     name = media ? 'mediaAtomic' : 'atomic'
   }
-  // is a combinator selector eg :hover > &
-  if (descendants && descendants.substr(0, 2) !== '&:') {
-    name += 'Combinator'
+  let subGroup = 0
+  if (descendants) {
+    let subGroupPart
+    // is a combinator selector eg :hover > &
+    if (descendants.substr(0, 2) !== '&:') {
+      name += 'Combinator'
+      subGroupPart = descendants.slice(1).split(/\s*[+>~]\s*/g)[0]
+    } else {
+      subGroupPart = descendants.slice(2)
+    }
+    const index = order.pseudo.indexOf(subGroupPart.split(':').slice(-1)[0])
+    if (index > -1) {
+      subGroup = index + 1
+    }
   }
-  return STYLE_GROUPS[name]
+
+  return subGroup > 0 ? STYLE_GROUPS[name] + '.' + subGroup : STYLE_GROUPS[name]
 }
 
 function normalizeValue(value) {

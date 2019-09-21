@@ -56,6 +56,27 @@ test('resolves &', t => {
   t.snapshot(resolverToString(StyleResolver))
 })
 
+test('can use :hover:active', t => {
+  const { StyleSheet, StyleResolver } = create()
+  const result = StyleSheet.create({
+    root: {
+      display: 'block',
+      '&:active': {
+        color: 'white',
+      },
+      '&:hover': {
+        color: 'green',
+      },
+      '&:hover:active': {
+        color: 'green',
+      },
+    },
+  })
+  t.snapshot(result.root)
+  StyleResolver.resolve(result.root)
+  t.snapshot(resolverToString(StyleResolver))
+})
+
 test('resolves non unitless numbers', t => {
   const { StyleSheet, StyleResolver } = create()
   const result = StyleSheet.create({
@@ -100,7 +121,7 @@ test('hashes media queries and descendant selectors', t => {
   StyleResolver.resolve(result.root)
   t.snapshot(resolverToString(StyleResolver))
   t.is(result.root[0], 'dss11_3bdajn-i0tgik')
-  t.is(result.root[1], 'dss10_41vss2-i0tgik')
+  t.is(result.root[1], 'dss10.3_41vss2-i0tgik')
 })
 
 test('supports fallback values', t => {

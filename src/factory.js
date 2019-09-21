@@ -68,7 +68,9 @@ function concatClassName(dest, className) {
   return {
     shouldInject: true,
     className: `${dest} ${className}`,
-    group: className.substring(3, className.indexOf('_')),
+    group: Number(
+      className.substring(3, className.indexOf('_')).replace('\\', '')
+    ),
   }
 }
 
