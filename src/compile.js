@@ -68,7 +68,7 @@ function getRuleType(prop, media, descendants) {
     } else {
       subGroupPart = descendants.slice(2)
     }
-    const index = order.pseudo.indexOf(subGroupPart)
+    const index = order.pseudo.indexOf(subGroupPart.split(':').slice(-1)[0])
     if (index > -1) {
       subGroup = index + 1
     }

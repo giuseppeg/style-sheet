@@ -171,7 +171,7 @@ function encodeGroupRule(group) {
 }
 
 function decodeGroupRule(cssRule) {
-  return Number(cssRule.selectorText.split('"')[1])
+  return Number(cssRule.selectorText.split(/["']/)[1])
 }
 
 function getOrderedGroups(obj) {

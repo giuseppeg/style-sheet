@@ -60,6 +60,7 @@ test('can use :hover:active', t => {
   const { StyleSheet, StyleResolver } = create()
   const result = StyleSheet.create({
     root: {
+      display: 'block',
       '&:active': {
         color: 'white',
       },
