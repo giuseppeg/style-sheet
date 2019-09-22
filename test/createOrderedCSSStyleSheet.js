@@ -79,3 +79,12 @@ test('not throws when the index is valid', t => {
   })
   t.snapshot(sheet.getTextContent())
 })
+
+test('sorts media queries', t => {
+  const sheet = create()
+  sheet.insertRule('@media (min-width: 200px) { .test200 { color: red } }', 1)
+  sheet.insertRule('@media (min-width: 300px) { .test300 { color: red } }', 0)
+  sheet.insertRule('@media (min-width: 100px) { .test100 { color: red } }', 0)
+  sheet.insertRule('@media (min-width: 100px) { .test100.1 { color: red } }', 1)
+  t.snapshot(sheet.getTextContent())
+})
