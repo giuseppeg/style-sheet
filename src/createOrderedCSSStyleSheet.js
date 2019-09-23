@@ -1,3 +1,4 @@
+import sortMq from './sort-mq'
 /**
  * This module is a fork of and modifies: https://git.io/fjceH
  *
@@ -34,12 +35,21 @@ export default function createOrderedCSSStyleSheet(sheet) {
       // Create record of existing selectors and rules
       if (cssText.indexOf('style-sheet-group') > -1) {
         group = decodeGroupRule(cssRule)
-        groups[group] = { start: i, rules: [cssText] }
+        groups[group] = { start: i, rules: [cssText], mq: [] }
       } else {
         const selectorText = getSelectorText(cssText)
         if (selectorText != null) {
-          selectors[selectorText] = true
-          groups[group].rules.push(cssText)
+          selectors[selectorText.selector] = true
+          let index = groups[group].rules.length - 1
+          if (selectorText.media) {
+            index = groups[group].mq.indexOf(selectorText.media)
+            if (index === -1) {
+              groups[group].mq.push(selectorText.media)
+              groups[group].mq.sort(sortMq)
+              index = groups[group].mq.indexOf(selectorText.media)
+            }
+          }
+          groups[group].rules.splice(index + 1, 0, cssText)
         }
       }
     })
@@ -119,7 +129,7 @@ export default function createOrderedCSSStyleSheet(sheet) {
       if (groups[group] == null) {
         const markerRule = encodeGroupRule(group)
         // Create the internal record.
-        groups[group] = { start: null, rules: [markerRule] }
+        groups[group] = { start: null, rules: [markerRule], mq: [] }
         // Update CSSOM.
         if (sheet != null) {
           sheetInsert(sheet, group, markerRule)
@@ -130,29 +140,31 @@ export default function createOrderedCSSStyleSheet(sheet) {
       // browser excludes vendor-prefixed properties and rewrites certain values
       // making cssText more likely to be different from what was inserted.
       const selectorText = getSelectorText(cssText)
-      if (selectorText != null && selectors[selectorText] == null) {
-        const hasIndex = typeof index === 'number'
-        // Update the internal records.
-        selectors[selectorText] = true
-        if (hasIndex) {
-          if (index > groups[group].rules.length - 1) {
-            throw new Error(`index ${index} out of bound for group ${group}`)
+      if (selectorText != null && selectors[selectorText.selector] == null) {
+        selectors[selectorText.selector] = true
+        if (typeof index !== 'number') {
+          index = groups[group].rules.length - 1
+          if (selectorText.media) {
+            index = groups[group].mq.indexOf(selectorText.media)
+            if (index === -1) {
+              groups[group].mq.push(selectorText.media)
+              groups[group].mq.sort(sortMq)
+              index = groups[group].mq.indexOf(selectorText.media)
+            }
           }
-          groups[group].rules.splice(index + 1, 0, cssText)
-        } else {
-          groups[group].rules.push(cssText)
         }
+        if (index > groups[group].rules.length - 1) {
+          throw new Error(`index ${index} out of bound for group ${group}`)
+        }
+        groups[group].rules.splice(index + 1, 0, cssText)
+
         // Update CSSOM.
         if (sheet != null) {
           const isInserted = sheetInsert(sheet, group, cssText, index)
           if (!isInserted) {
             // Revert internal record change if a rule was rejected (e.g.,
             // unrecognized pseudo-selector)
-            if (hasIndex) {
-              groups[group].rules.splice(index + 1, 1)
-            } else {
-              groups[group].rules.pop()
-            }
+            groups[group].rules.splice(index + 1, 1)
           }
         }
       }
@@ -184,10 +196,14 @@ const pattern = /\s*([,])\s*/g
 function getSelectorText(cssText) {
   const split = cssText.split('{')
   let selector = split[0].trim()
+  let media = null
   if (selector.startsWith('@media')) {
+    media = selector.substring(6).trim()
     selector = split[1].trim()
   }
-  return selector !== '' ? selector.replace(pattern, '$1') : null
+  return selector !== ''
+    ? { media, selector: selector.replace(pattern, '$1') }
+    : null
 }
 
 function insertRuleAt(root, cssText, position) {

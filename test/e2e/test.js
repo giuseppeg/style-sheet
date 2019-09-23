@@ -329,6 +329,72 @@ test('resolves pseudo classes deterministically', async t => {
   await testAfter(context)
 })
 
+test('sorts media queries in a mobile-first fashion', async t => {
+  const context = await testBefore()
+  const { gotoPage, page } = context
+
+  const preRenderedStyles = `[style-sheet-group="11"] { }
+@media (min-width: 200px) {
+  .dss11_zi3on2-11pur1y { margin-left: 30px; }
+}`
+
+  await gotoPage('test.html', {
+    onLoad: async () => {
+      await page.evaluate(
+        preRenderedStyles => {
+          const preRendered = document.createElement('style')
+          preRendered.id = '__style_sheet__'
+          preRendered.textContent = preRenderedStyles
+          document.head.appendChild(preRendered)
+        },
+        [preRenderedStyles]
+      )
+    },
+  })
+
+  const before = await page.evaluate(() => {
+    const { StyleResolver } = styleSheet
+    return StyleResolver.getStyleSheet().getTextContent()
+  })
+
+  t.is(before, preRenderedStyles)
+
+  const after = await page.evaluate(() => {
+    const { StyleSheet, StyleResolver } = styleSheet
+
+    const styles = StyleSheet.create({
+      test: {
+        '@media (max-width: 100px)': {
+          padding: 10,
+        },
+        '@media (min-width: 100px)': {
+          padding: 10,
+          marginLeft: 20,
+        },
+        '@media (min-width: 200px)': {
+          padding: 20,
+        },
+      },
+    })
+
+    StyleResolver.resolve(styles.test)
+    return StyleResolver.getStyleSheet().getTextContent()
+  })
+
+  const sorted = `[style-sheet-group="3"]{}
+@media (min-width: 100px){.dss3_16y3i9f-7qvd50{padding:10px;}}
+@media (min-width: 200px){.dss3_epu5c8-13dvipr{padding:20px;}}
+@media (max-width: 100px){.dss3_oqkgbt-7qvd50{padding:10px;}}
+[style-sheet-group="11"] { }
+@media (min-width: 100px){.dss11_5om9wv-13dvipr{margin-left:20px;}}
+@media (min-width: 200px) {
+  .dss11_zi3on2-11pur1y { margin-left: 30px; }
+}`
+  t.is(sorted, after)
+
+  await testAfter(context)
+})
+
 async function active(page, selector, doSomething) {
   const el = await page.$(selector)
   const { top, left } = await page.evaluate(el => {
