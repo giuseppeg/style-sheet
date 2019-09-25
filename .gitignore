@@ -1,2 +1,5 @@
-dist
+lib/**/*.prod.js
+lib/**/*.dev.js
+lib/*.js
+test/e2e/lib
 node_modules

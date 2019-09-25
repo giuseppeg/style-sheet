@@ -1,4 +1,4 @@
-test/e2e/_helpers.js
+test/lib/_helpers.js
 test/_register.js
-dist
+lib
 fixtures

@@ -12,10 +12,10 @@ global.testBefore = async () => {
       await onLoad()
     }
     await page.addScriptTag({
-      url: 'http://localhost:5000/dist/_styleSheet.js',
+      url: 'http://localhost:5000/lib/_styleSheet.js',
     })
     await page.addScriptTag({
-      url: 'http://localhost:5000/dist/_styleSheetFactory.js',
+      url: 'http://localhost:5000/lib/_styleSheetFactory.js',
     })
   }
   return { browser, page, gotoPage }
