@@ -12,13 +12,17 @@ const ENV_ALIASES = {
 }
 const ENTRY_FILES = ['factory', 'index', 'createElement']
 
-const plugins = () =>
-  [
+const plugins = format => {
+  return [
     replace({
       'process.env.NODE_ENV': JSON.stringify(ENV),
     }),
     babel({
       exclude: 'node_modules/**',
+      babelrc: false,
+      presets: [
+        ['@babel/preset-env', { targets: { esmodules: format === 'esm' } }],
+      ],
     }),
     resolve({
       browser: true,
@@ -26,6 +30,7 @@ const plugins = () =>
     commonjs(),
     ENV !== 'development' ? terser() : null,
   ].filter(Boolean)
+}
 
 const confCreators = ENTRY_FILES.map(entryName => [
   entryName,
@@ -33,10 +38,10 @@ const confCreators = ENTRY_FILES.map(entryName => [
     input: `./src/${entryName}.js`,
     output: {
       format,
-      file: `dist/${entryName}.${format}.${ENV_ALIASES[ENV]}.js`,
+      file: `lib/${format}/${entryName}.${ENV_ALIASES[ENV]}.js`,
       compact: ENV === 'production',
     },
-    plugins: plugins(),
+    plugins: plugins(format),
   }),
 ])
 
@@ -74,7 +79,7 @@ const UMD_CONFIG = confCreators.map(([entryName, creator]) => {
 const BABEL_PLUGIN_CONFIG = {
   input: './src/babel.js',
   output: {
-    file: './dist/babel.js',
+    file: './lib/babel.js',
     format: 'cjs',
     exports: 'named',
   },
