@@ -1,4 +1,6 @@
 test/lib/_helpers.js
 test/_register.js
-lib
+lib/**/*.prod.js
+lib/**/*.dev.js
+lib/*.js
 fixtures

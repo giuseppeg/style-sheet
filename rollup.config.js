@@ -20,7 +20,9 @@ const plugins = format => {
     babel({
       exclude: 'node_modules/**',
       babelrc: false,
-      presets: [['@babel/preset-env', { targets: { esmodules: format === 'esm' } }]],
+      presets: [
+        ['@babel/preset-env', { targets: { esmodules: format === 'esm' } }],
+      ],
     }),
     resolve({
       browser: true,
