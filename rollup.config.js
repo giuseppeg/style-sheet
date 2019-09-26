@@ -17,14 +17,11 @@ const plugins = format => {
     replace({
       'process.env.NODE_ENV': JSON.stringify(ENV),
     }),
-    // Don't transpile ESM
-    format === 'esm'
-      ? null
-      : babel({
-          exclude: 'node_modules/**',
-          babelrc: false,
-          presets: [['@babel/preset-env', { targets: { ie: '11' } }]],
-        }),
+    babel({
+      exclude: 'node_modules/**',
+      babelrc: false,
+      presets: [['@babel/preset-env', { targets: { esmodules: format === 'esm' } }]],
+    }),
     resolve({
       browser: true,
     }),
