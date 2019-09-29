@@ -3,4 +3,5 @@ test/_register.js
 lib/**/*.prod.js
 lib/**/*.dev.js
 lib/*.js
+test/e2e/lib/
 fixtures

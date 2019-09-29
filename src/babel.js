@@ -17,8 +17,8 @@ export default function(babel) {
     visitor: {
       Program: {
         exit(path, state) {
+          const { types: t } = babel
           if (!state.hasStyleSheetImport && state.needsStyleSheetImport) {
-            const { types: t } = babel
             const importSpecifier = t.identifier(
               state.opts.importName || 'StyleSheet'
             )
@@ -28,10 +28,21 @@ export default function(babel) {
             )
             path.node.body.unshift(importDeclaration)
           }
+          if (!state.hasStylePropImport && state.needsStylePropImport) {
+            const importSpecifier = t.identifier('createElement')
+            const importDeclaration = t.importDeclaration(
+              [t.importSpecifier(importSpecifier, importSpecifier)],
+              t.stringLiteral(state.opts.stylePropPackageName)
+            )
+            path.node.body.unshift(importDeclaration)
+          }
         },
       },
       JSXAttribute(path, state) {
-        if (path.node.name.name !== 'css') {
+        if (!state.opts.stylePropName) {
+          state.opts.stylePropName = 'css'
+        }
+        if (path.node.name.name !== state.opts.stylePropName) {
           return
         }
 
@@ -69,7 +80,7 @@ export default function(babel) {
               [
                 t.objectExpression([
                   t.objectProperty(
-                    t.identifier('__cssProp'),
+                    t.identifier('__styleProp'),
                     cloneNode(expression.node)
                   ),
                 ]),
@@ -84,8 +95,37 @@ export default function(babel) {
         if (isExpressionArray && hoisted.length === expressions.length) {
           expression.hoist()
         }
+
+        state.needsStylePropImport = true
+
+        if (!state.opts.stylePropPackageName) {
+          throw path.buildCodeFrameError(
+            `
+Found \`${state.opts.stylePropName}\` prop but you didn't specify the path to the custom createElement in the Babel configuration.
+Please set the \`stylePropPackageName\` option.
+
+{
+  "plugins": [
+    [
+      "style-sheet/babel",
+      {
+        "stylePropName": "${state.opts.stylePropName}",
+        "stylePropPackageName": "./path/to/createElement.js"
+      }
+    ]
+  ]
+}
+
+Read more about how to create the style prop package at https://github.com/giuseppeg/style-sheet
+`
+          )
+        }
       },
       ImportDeclaration(path, state) {
+        const stylePropPackageName = state.opts.stylePropPackageName
+        state.hasStylePropImport =
+          path.node.source.value === stylePropPackageName
+
         const packageName = state.opts.packageName || 'style-sheet'
         if (path.node.source.value !== packageName) {
           return
