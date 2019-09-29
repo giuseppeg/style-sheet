@@ -2,7 +2,9 @@
 import path from 'path'
 import test from 'ava'
 import { transformFileSync } from '@babel/core'
-import plugin, { getCss } from '../../src/babel'
+import _plugin, { getCss } from '../../src/babel'
+
+const plugin = [_plugin, { stylePropPackageName: './lib/createElement' }]
 
 const transform = (file, opts = {}) =>
   transformFileSync(path.resolve(__dirname, file), {

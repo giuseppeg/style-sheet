@@ -2,30 +2,30 @@ import React from 'react'
 
 export default function createCreateElement(
   { StyleSheet, StyleResolver },
-  cssPropName = 'css'
+  stylePropName = 'css'
 ) {
   return function(tag, props, ...children) {
-    if (props && props[cssPropName]) {
-      const css = props[cssPropName]
-      delete props[cssPropName]
+    if (props && props[stylePropName]) {
+      const styles = props[stylePropName]
+      delete props[stylePropName]
       const className = props.className
       delete props.className
 
       let rules = []
-      if (Array.isArray(css)) {
-        rules = css.map(rule => {
-          if (rule.__cssProp) {
-            return rule.__cssProp
+      if (Array.isArray(styles)) {
+        rules = styles.map(rule => {
+          if (rule.__styleProp) {
+            return rule.__styleProp
           }
           return StyleSheet.create({ rule }).rule
         })
-      } else if (css.__cssProp) {
-        rules.push(css.__cssProp)
+      } else if (styles.__styleProp) {
+        rules.push(styles.__styleProp)
       } else {
-        rules.push(StyleSheet.create({ rule: css }).rule)
+        rules.push(StyleSheet.create({ rule: styles }).rule)
       }
       if (className) {
-        // className takes precedence over the css prop
+        // className takes precedence over the style prop
         // this allows parent components to style the current one.
         rules.push(
           /dss\d+_/.test(className) ? className.split(' ') : [className]
