@@ -409,7 +409,7 @@ const i18nManager = {
 setI18nManager(i18nManager)
 ```
 
-In your app you can then toggle `isRTL` and (important) you need to re-render the application yourself i.e. `isRTL` is not a reactive property and styles don't resolve automatically when you chance direction in the i18n manager.
+In your app you can then toggle `isRTL` and (important) you need to re-render the application yourself i.e. `isRTL` is not a reactive property and styles don't resolve automatically when you change direction in the i18n manager. In a React application the i18n manager would likely be kept in state and consumed via context.
 
 I18n works with server side rendering and static extraction too!
 
