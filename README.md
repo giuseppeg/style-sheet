@@ -329,7 +329,7 @@ Note that when applying styles, `className` takes always precedence over the sty
 
 To use this feature you need to create an empty file in your project, name it `createElement.js` and add the following code:
 
-```js
+```jsx
 import * as StyleSheet from 'style-sheet'
 import setup from 'style-sheet/lib/esm/createElement'
 
