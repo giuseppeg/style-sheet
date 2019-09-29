@@ -1,9 +1,6 @@
 # StyleSheet ⚡️💨
 
-<div style="display: flex; justify-content: space-between">  
-[![Build Status](https://travis-ci.org/giuseppeg/style-sheet.svg?branch=master)](https://travis-ci.org/giuseppeg/style-sheet)
-<a href="https://github.com/giuseppeg/style-sheet"><img width="1em" height="1em" alt="source code" src="https://github.com/fluidicon.png"></a>
-</div>
+<a href="https://travis-ci.org/giuseppeg/style-sheet"><img alt="Build Status" src="https://travis-ci.org/giuseppeg/style-sheet.svg?branch=master"></a> <a href="https://github.com/giuseppeg/style-sheet"><img width="18px" height="18px" alt="source code" src="https://github.com/fluidicon.png"></a>
 
 StyleSheet is a library to author styles in JavaScript.
 
