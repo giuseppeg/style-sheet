@@ -1,4 +1,4 @@
-# ⚡️💨 StyleSheet
+# StyleSheet ⚡️💨
 
 [![Build Status](https://travis-ci.org/giuseppeg/style-sheet.svg?branch=master)](https://travis-ci.org/giuseppeg/style-sheet)
 
@@ -31,7 +31,7 @@ StyleResolver.resolve([styles.another, styles.one])
 // color is red
 ```
 
-`StyleResolver.resolve` works similarly to `Object.assign` and merges rules right to left.
+`StyleResolver.resolve` works like `Object.assign` and merges rules right to left.
 
 StyleSheet comes with built-in support for pseudo classes and media queries, i18n, React and customizable `css` prop.
 
@@ -41,8 +41,7 @@ The StyleSheet library API is highly inspired to React Native and React Native f
 [Building the New facebook.com](https://developers.facebook.com/videos/2019/building-the-new-facebookcom-with-react-graphql-and-relay/) touches on it (around 28:40 in the video).</p>&mdash; Daniel Lo Nigro (@Daniel15) Software Engineer at Facebook
 > [August 12, 2019](https://twitter.com/Daniel15/status/1160980442041896961)
 
-<img width="500" alt="" role= src="https://user-images.githubusercontent.com/711311/65828122-b704e080-e297-11e9-9659-4c177b60b42e.png">
-
+<img width="500" alt="" role="presentation" src="https://user-images.githubusercontent.com/711311/65828122-b704e080-e297-11e9-9659-4c177b60b42e.png">
 
 ## Getting started
 
@@ -57,6 +56,27 @@ The package exposes a `StyleSheet` and `StyleResolver` instances that are used t
 ```js
 import { StyleSheet, StyleResolver } from 'style-sheet'
 ```
+
+Use `StyleSheet.create` to create a style object of rules.
+
+```js
+const styles = StyleSheet.create({
+  one: {
+    color: 'red',
+  },
+  another: {
+    color: 'green'
+  }
+})
+```
+
+And `StyleResolver.resolve` to consume the `styles`:
+
+```js
+StyleResolver.resolve([styles.one, styles.another])
+```
+
+Remember the order in which you pass rules to `StyleResolver.resolve` matters!
 
 ### Pseudo classes, media queries and other *selectors*
 
@@ -84,12 +104,12 @@ const styles = StyleSheet.create({
 
 ## Styles resolution
 
-`StyleSheet.create` converts rules into arrays of atomic CSS classes. Every atomic CSS class corresponds to a declaration inside of the rule:
+`StyleSheet.create` converts rules to arrays of atomic CSS classes. Every atomic CSS class corresponds to a declaration inside of the rule:
 
 ```js
 const rules = StyleSheet.create({
   rule: {
-	display: 'block', // declaration
+    display: 'block', // declaration
     color: 'green'    // declaration
   }
 })
@@ -114,8 +134,8 @@ To render on the server, you can access the underlying style sheet that the libr
 
 This method returns an ordered StyleSheet that exploses two methods:
 
-* `getTextContent` to get the atomic CSS for the rules that have been resolved
-* `flush` to `getTextContent` and clear the stylesheet - useful when a server deamon is rendering multiple paegs.
+* `getTextContent` to get the atomic CSS for the rules that have been resolved.
+* `flush` to `getTextContent` and clear the stylesheet - useful when a server deamon is rendering multiple pages.
 
 ```js
 import { StyleResolver } from 'style-sheet'
@@ -137,7 +157,7 @@ const html = `
 
 By setting the `id` attribute to `__style_sheet__` StyleSheet can hydrate styles automatically on the client.
 
-## Extracting to static
+## Extracting to static .css file
 
 StyleSheet comes with a Babel plugin that can extract static rules. This means that your styles are not computed at runtime or in JavaScript and can be served via `link` tag.
 
@@ -181,7 +201,7 @@ const html = `
 `
 ```
 
-Note that StyleSheet **can also reconcile extracted styles!!!** You just need to make sure that the `link` tag has the `__style_sheet__` set.
+Note that StyleSheet **can also reconcile extracted styles!!!** You just need to make sure that the `link` tag has the `__style_sheet__` set, and keep in mind that CORS apply.
 
 When the Babel plugin can't resolve styles to static, it flags them as dynamic and it leaves them in JavaScript. For this reason it is always a good idea to define dynamic styles in separate rules.
 
@@ -207,6 +227,56 @@ By default the plugin looks for references to `StyleSheet` when they are importe
 ```
 
 This is useful when StyleSheet is useds in custom ways like described in the advanced usage section.
+
+### Extracting styles with webpack
+
+In your webpack configuration create a small plugin to wrap the `getCss` function:
+
+```js
+const styleSheet = require('style-sheet/babel')
+const { RawSource } = require('webpack-sources')
+
+const bundleFilenamePath = 'style-sheet-bundle.css'
+class StyleSheetPlugin {
+  apply(compiler) {
+    compiler.plugin('emit', (compilation, cb) => {
+      compilation.assets[bundleFilenamePath] = new RawSource(styleSheet.getCss())
+      cb()
+    })
+  }
+}
+```
+
+and register an instance of it in the `plugins` section of the webpack configuration:
+
+```js
+// class StyleSheetPlugin {
+// ...
+// }
+
+module.exports = {
+  // ...
+  module: {
+    rules: {
+      test: /\.jsx?$/,
+      use: {
+        loader: 'babel-loader',
+        options: {
+          plugins: [styleSheet.default]
+        }
+      }
+    }
+  },
+  plugins: [
+    new StyleSheetPlugin()
+  ],
+  // ...
+}
+```
+
+Remember to also register the Babel plugin if you are using Babel via webpack.
+
+That's it! webpack will write `bundleFilenamePath` in your public assets folder.
 
 ## Advanced usage
 
@@ -299,6 +369,27 @@ or if you use `@babel/preset-react`
   ]
 }
 ```
+
+## i18n
+
+StyleSheet comes with built-in support for i18n and RTL.
+
+In order for i18n to work StyleSheet requires you to define and set an i18n manager that is an object with two properties:
+
+```js
+import { setI18nManager } from 'style-sheet'
+const i18nManager = {
+  isRTL: true, // Boolean
+  doLeftAndRightSwapInRTL: true // Boolean
+}
+
+setI18nManager(i18nManager)
+```
+
+In your app you can then toggle `isRTL` and (important) you need to re-render the application yourself i.e. `isRTL` is not a reactive property and styles don't resolve automatically when you chance direction in the i18n manager.
+
+I18n works with server side rendering and static extraction too!
+
 
 ## Contributing
 
