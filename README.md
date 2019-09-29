@@ -209,8 +209,10 @@ When the Babel plugin can't resolve styles to static, it flags them as dynamic a
 
 By default the plugin looks for references to `StyleSheet` when they are imported from `style-sheet`. However both can be configured, via plugin options:
 
-* `importName`
-* `packageName`
+* `importName` - default is `StyleSheet` and the plugin looks for `StyleSheet.create`.
+* `packageName` - default is `style-sheet` but when using advanced features (see below) you can point to your custom setup.
+* `stylePropName` - default is `css`. In React the plugin looks for inline styles defined via this prop and extracts them.
+* `stylePropPackageName` - mandatory. When using the style prop you need to set this path to point to where you setup your custom `createElement` (see below).
 
 ```json
 {
@@ -218,8 +220,10 @@ By default the plugin looks for references to `StyleSheet` when they are importe
     [
       "style-sheet/babel",
       {
-        "importName": "create",
-        "packageName": "../lib/customInstance"
+        "importName": "StyleSheet",
+        "packageName": "./path/to/customInstance",
+        "stylePropName": "css",
+        "stylePropPackageName": "./path/to/createElement.js"
       }
     ]
   ]
@@ -280,7 +284,15 @@ That's it! webpack will write `bundleFilenamePath` in your public assets folder.
 
 ## Advanced usage
 
-StyleSheet comes with a factory to generate an instance of `StyleSheet` and `StyleResolver`. The factory available at `style-sheet/factory` and can be used to have fine control over the style sheets creation and support unusual cases like rendering inside of iframes.
+StyleSheet ships with CommonJS, ESM and UMD bundles respectively available at:
+
+* `lib/cjs`
+* `lib/esm`
+* `lib/umd`
+
+Throught the readme we will use `lib/esm` in the examples that require you to point to individual modules manually.
+
+StyleSheet comes with a factory to generate an instance of `StyleSheet` and `StyleResolver`. The factory available at `style-sheet/lib/umd/factory` and can be used to have fine control over the style sheets creation and support unusual cases like rendering inside of iframes.
 
 More documentation to come, please refer to the implementation in `src/factory.js` and see how it is used in `src/index.js`.
 
@@ -309,22 +321,21 @@ const styles = StyleSheet.create({
 })
 ```
 
-### The `css` prop
+### The style (`css`) prop
 
+StyleSheet provides an helper to create a custom `createElement` function that adds support for a styling prop to React. By default this prop is called `css` (but its name can be configured) and it allows you to define "inline styles" that get compiled to real CSS and removed from the element. These are also vendor prefixed and scoped.
 
-StyleSheet provides an helper to create a custom `createElement` function that adds support for a styling prop to React. This prop is called `css` (but its name can be configured) and it allows you to define "inline styles" that get compiled to real CSS and removed from the element. These are also vendor prefixed and scoped.
-
-Note that when applying styles, `className` takes always precedence over the `css` prop. This allows parent components to pass styles such as overrides to children.
+Note that when applying styles, `className` takes always precedence over the style prop. This allows parent components to pass styles such as overrides to children.
 
 To use this feature you need to create an empty file in your project, name it `createElement.js` and add the following code:
 
 ```js
 import * as StyleSheet from 'style-sheet'
-import setup from 'style-sheet/createElement'
+import setup from 'style-sheet/lib/esm/createElement'
 
 export default setup(
-	StyleSheet,
-    cssPropName: 'css'
+  StyleSheet,
+  stylePropName: 'css'
 )
 ```
 
@@ -336,7 +347,7 @@ and then instruct Babel to use this method instead of the default `React.createE
 /* @jsx createElement */
 
 import React from 'react'
-import createElement from '../createElement.js'
+import createElement from './path/to/createElement.js'
 
 export default ({ children }) => (
   <div css={{ color: 'red' }}>{children}</div>
@@ -349,7 +360,11 @@ export default ({ children }) => (
 {
   "plugins": [
     ["@babel/plugin-transform-react-jsx", {
-      "pragma": "createElement", // React will use style-sheet's createElement
+      "pragma": "createElement" // React will use style-sheet's createElement
+    }],
+    ["style-sheet/babel", {
+      "stylePropName": "css",
+      "stylePropPackageName": "./path/to/createElement.js"
     }]
   ]
 }
@@ -363,12 +378,20 @@ or if you use `@babel/preset-react`
     [
       "@babel/preset-react",
       {
-        "pragma": "createElement", // React will use style-sheet's createElement
+        "pragma": "createElement" // React will use style-sheet's createElement
       }
     ]
+  ],
+  "plugins": [
+    ["style-sheet/babel", {
+      "stylePropName": "css",
+      "stylePropPackageName": "./path/to/createElement.js"
+    }]
   ]
 }
 ```
+
+When possible, the Babel plugin will hoist and extract to .css file the style prop!
 
 ## i18n
 
