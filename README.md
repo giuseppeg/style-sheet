@@ -333,9 +333,10 @@ To use this feature you need to create an empty file in your project, name it `c
 import * as StyleSheet from 'style-sheet'
 import setup from 'style-sheet/lib/esm/createElement'
 
+const stylePropName = 'css'
 export default setup(
   StyleSheet,
-  stylePropName: 'css'
+  stylePropName
 )
 ```
 
