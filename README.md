@@ -4,7 +4,7 @@
 
 StyleSheet is a library to author styles in JavaScript.
 
-It is fast and generates optimized, tiny bundles by compiling rules to atomic CSS that can then be extracted to .css file with a Babel plugin.
+It is **fast** and generates optimized, tiny bundles by compiling rules to **atomic CSS** that can then be **extracted to .css file** with a Babel plugin.
 
 ```js
 import { StyleSheet, StyleResolver } from 'style-sheet'
