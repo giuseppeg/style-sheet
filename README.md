@@ -292,7 +292,7 @@ StyleSheet ships with CommonJS, ESM and UMD bundles respectively available at:
 * `lib/esm`
 * `lib/umd`
 
-Throught the readme we will use `lib/esm` in the examples that require you to point to individual modules manually.
+Throughout the readme we will use `lib/esm` in the examples that require you to point to individual modules manually.
 
 StyleSheet comes with a factory to generate an instance of `StyleSheet` and `StyleResolver`. The factory available at `style-sheet/lib/umd/factory` and can be used to have fine control over the style sheets creation and support unusual cases like rendering inside of iframes.
 
