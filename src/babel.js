@@ -123,6 +123,7 @@ Read more about how to create the style prop package at https://github.com/giuse
       },
       ImportDeclaration(path, state) {
         const stylePropPackageName = state.opts.stylePropPackageName
+        state.needsStylePropImport = Boolean(stylePropPackageName)
         state.hasStylePropImport =
           path.node.source.value === stylePropPackageName
 
