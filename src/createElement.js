@@ -35,7 +35,7 @@ export default function createCreateElement(
         // className takes precedence over the style prop
         // this allows parent components to style the current one.
         rules.push(
-          /dss\d+_/.test(className) ? className.split(' ') : [className]
+          /dss[\d\.]+_/.test(className) ? className.split(' ') : [className]
         )
       }
       props.className = StyleResolver.resolve(rules)
