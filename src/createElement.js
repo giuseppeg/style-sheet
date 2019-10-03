@@ -13,12 +13,19 @@ export default function createCreateElement(
 
       let rules = []
       if (Array.isArray(styles)) {
-        rules = styles.map(rule => {
-          if (rule.__styleProp) {
-            return rule.__styleProp
+        rules = styles.reduce((rules, rule) => {
+          if (!rule) {
+            return rules
           }
-          return StyleSheet.create({ rule }).rule
-        })
+          if (rule.__styleProp) {
+            rules.push(rule.__styleProp)
+          } else if (Array.isArray(rule)) {
+            rules.push(...rule)
+          } else {
+            rules.push(StyleSheet.create({ rule }).rule)
+          }
+          return rules
+        }, [])
       } else if (styles.__styleProp) {
         rules.push(styles.__styleProp)
       } else {
@@ -28,7 +35,7 @@ export default function createCreateElement(
         // className takes precedence over the style prop
         // this allows parent components to style the current one.
         rules.push(
-          /dss\d+_/.test(className) ? className.split(' ') : [className]
+          /dss[\d.]+_/.test(className) ? className.split(' ') : [className]
         )
       }
       props.className = StyleResolver.resolve(rules)

@@ -336,10 +336,13 @@ import * as StyleSheet from 'style-sheet'
 import setup from 'style-sheet/lib/esm/createElement'
 
 const stylePropName = 'css'
-export default setup(
-  StyleSheet,
-  stylePropName
-)
+export default {
+  createElement:
+    setup(
+      StyleSheet,
+      stylePropName
+    )
+}
 ```
 
 and then instruct Babel to use this method instead of the default `React.createElement`. This can be done in two ways:
