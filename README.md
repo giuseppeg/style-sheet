@@ -416,7 +416,7 @@ I18n works with server side rendering and static extraction too!
 
 ## Contributing
 
-Since this is a side project and we don't want to burn out, we decided to disable the GitHub issues. I have a full time job and work on this project at random times and for fun.
+Since this is a side project and we don't want to burn out, we decided to disable the GitHub issues. We have full time jobs and work on this project at random times and for fun.
 
 <a href="https://medium.com/@kitze/github-stars-wont-pay-your-rent-8b348e12baed"><img alt="Blog Post: Stars Won't Pay You Rent" src="https://img.shields.io/badge/stars-won't%20pay%20you%20rent-ff0000"></a>
 
