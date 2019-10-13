@@ -100,6 +100,7 @@ function toI18n(lookup, thing) {
     : null
 }
 
+const cache = {}
 const parse = (obj, descendants, media, opts) => {
   const rules = {}
 
@@ -116,6 +117,12 @@ const parse = (obj, descendants, media, opts) => {
         break
       }
       default: {
+        const cacheKey = key + value + descendants + media
+        const cached = cache[cacheKey]
+        if (cached) {
+          Object.assign(rules, cached)
+          break
+        }
         let className = createClassName(key, value, descendants, media)
         if (rules[className]) {
           break
@@ -155,6 +162,7 @@ const parse = (obj, descendants, media, opts) => {
           }
         }
         rules[className] = rule
+        cache[cacheKey] = { [className]: rule }
         break
       }
     }
