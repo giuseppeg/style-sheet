@@ -416,15 +416,7 @@ I18n works with server side rendering and static extraction too!
 
 ## Contributing
 
-Since this is a side project and we don't want to burn out, we decided to disable the GitHub issues.
-
-### Bugs
-
-If you find a bug please submit a pull request with a failing test or a fix, and good description for the issue.
-
-### Features request
-
-Please submit a pull request with an RFC where you explain the why and the how you think this feature is useful. We'd be glad to start a conversation from there before moving on to implementation. Also please let us know if you would be up to implement the feature you are suggesting.
+Please refer to the [contributing guidelines document](https://github.com/giuseppeg/contributing).
 
 ### Roadmap
 
