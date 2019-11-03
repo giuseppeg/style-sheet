@@ -215,6 +215,7 @@ By default the plugin looks for references to `StyleSheet` when they are importe
 * `packageName` - default is `style-sheet` but when using advanced features (see below) you can point to your custom setup.
 * `stylePropName` - default is `css`. In React the plugin looks for inline styles defined via this prop and extracts them.
 * `stylePropPackageName` - mandatory. When using the style prop you need to set this path to point to where you setup your custom `createElement` (see below).
+* `rtl` - boolean. When set generates I18n styles and extracts them too.
 
 ```json
 {
@@ -225,7 +226,8 @@ By default the plugin looks for references to `StyleSheet` when they are importe
         "importName": "StyleSheet",
         "packageName": "./path/to/customInstance",
         "stylePropName": "css",
-        "stylePropPackageName": "./path/to/createElement.js"
+        "stylePropPackageName": "./path/to/createElement.js",
+        "rtl": true
       }
     ]
   ]
