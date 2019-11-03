@@ -32,3 +32,13 @@ test.serial('missing import - jsx', async t => {
   t.snapshot(code)
   t.snapshot(getCss())
 })
+
+test.serial('generates i18n styles', async t => {
+  const { code } = await transform('./fixtures/i18n.js', {
+    plugins: [
+      [_plugin, { stylePropPackageName: './lib/createElement', rtl: true }],
+    ],
+  })
+  t.snapshot(code)
+  t.snapshot(getCss())
+})

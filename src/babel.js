@@ -2,7 +2,7 @@ import evaluateSimple from 'babel-helper-evaluate-path'
 import evaluateComplex from 'linaria/lib/babel/evaluate'
 import jsx from '@babel/plugin-syntax-jsx'
 import { create } from './factory'
-const { StyleSheet, StyleResolver } = create()
+const { StyleSheet, StyleResolver, setI18nManager } = create()
 
 // This function returns the extracted CSS to save in a .css file.
 // It must be called after all the files are processed by Babel.
@@ -11,11 +11,21 @@ export function getCss() {
 }
 
 export default function(babel) {
+  let setI18n = false
   return {
     name: 'style-sheet/babel',
     inherits: jsx,
     visitor: {
       Program: {
+        enter(path, state) {
+          if (!setI18n && typeof state.opts.rtl === 'boolean') {
+            setI18n = true
+            setI18nManager({
+              isRTL: state.opts.rtl,
+              doLeftAndRightSwapInRTL: state.opts.rtl,
+            })
+          }
+        },
         exit(path, state) {
           const { types: t } = babel
           if (!state.hasStyleSheetImport && state.needsStyleSheetImport) {
