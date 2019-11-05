@@ -2,6 +2,10 @@
   "name": "style-sheet",
   "version": "4.0.3",
   "description": "Fast CSS in JS library with support for static CSS extraction.",
+  "funding": {
+    "type": "github",
+    "url": "https://github.com/sponsors/giuseppeg"
+  },
   "main": "lib/cjs/index.js",
   "module": "lib/esm/index.js",
   "unpkg": "lib/umd/index.prod.js",
