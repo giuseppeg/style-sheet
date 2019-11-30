@@ -140,7 +140,11 @@ export default function createOrderedCSSStyleSheet(sheet) {
       // browser excludes vendor-prefixed properties and rewrites certain values
       // making cssText more likely to be different from what was inserted.
       const selectorText = getSelectorText(cssText)
-      if (selectorText != null && selectors[selectorText.selector] == null) {
+      if (
+        selectorText != null &&
+        (selectors[selectorText.selector] == null ||
+          selectorText.selector.startsWith(':'))
+      ) {
         selectors[selectorText.selector] = true
         if (typeof index !== 'number') {
           index = groups[group].rules.length - 1

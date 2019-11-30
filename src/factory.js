@@ -2,6 +2,8 @@ import compile from './compile'
 import validate from './validate'
 import createOrderedCSSStyleSheet from './createOrderedCSSStyleSheet'
 import { createSourceMapsEngine } from './source-maps'
+import { isUnitless, normalizeValue } from './unitless'
+import { applyTheme, getThemeRules } from './theme'
 
 const isBrowser = typeof window !== 'undefined'
 const isProd = process.env.NODE_ENV === 'production'
@@ -28,6 +30,9 @@ function createStyleSheet(rules, opts) {
         const rule = styles[token]
         if (!isProd) {
           validate(rule, null)
+        }
+        if (opts.theme) {
+          applyTheme(opts.theme, rule)
         }
         const compiled = compile(rule, opts)
         Object.assign(rules, compiled)
@@ -132,6 +137,14 @@ function createStyleResolver(sheet, rules, opts) {
 
           if (result.shouldInject && !injected[className]) {
             if (rule) {
+              if (opts.theme) {
+                const themeRules = getThemeRules(opts.theme, rule)
+                if (themeRules.length) {
+                  themeRules.forEach(rule => {
+                    sheet.insertRule(rule, 0)
+                  })
+                }
+              }
               sheet.insertRule(rule, result.group)
               if (i18nRules && !isBrowser) {
                 const i18nIndexInverse = i18nIndex ? 0 : 1
@@ -179,12 +192,20 @@ export function create(options = {}) {
   }
   setI18nManager(options.i18n)
 
-  const sheet = createOrderedCSSStyleSheet(options.sheet || createSheet())
-  const rules = {}
+  let theme
+  function setTheme(newTheme) {
+    theme = newTheme
+  }
+  if (options.theme) {
+    setTheme(options.theme)
+  }
 
   const opts = {
     get i18n() {
       return i18n
+    },
+    get theme() {
+      return theme
     },
   }
 
@@ -197,9 +218,13 @@ export function create(options = {}) {
     )
   }
 
+  const sheet = createOrderedCSSStyleSheet(options.sheet || createSheet())
+  const rules = {}
+
   return {
     StyleSheet: createStyleSheet(rules, opts),
     StyleResolver: createStyleResolver(sheet, rules, opts),
     setI18nManager,
+    setTheme,
   }
 }

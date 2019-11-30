@@ -3,7 +3,8 @@
 
 import hashFn from 'fnv1a'
 import { prefix } from 'inline-style-prefixer'
-import { unitless, i18n, shortHandProperties } from './data'
+import { i18n, shortHandProperties } from './data'
+import { isUnitless, normalizeValue } from './unitless'
 import { STYLE_GROUPS } from './createOrderedCSSStyleSheet'
 
 export function createClassName(property, value, descendants, media) {
@@ -77,23 +78,6 @@ function getRuleType(prop, media, descendants) {
   return subGroup > 0 ? STYLE_GROUPS[name] + '.' + subGroup : STYLE_GROUPS[name]
 }
 
-function normalizeValue(value) {
-  if (typeof value === 'number') {
-    if (value !== 0) {
-      return value + 'px'
-    }
-  } else if (Array.isArray(value)) {
-    return value.map(v => {
-      if (typeof v === 'number' && v !== 0) {
-        return v + 'px'
-      }
-      return v
-    })
-  }
-
-  return value
-}
-
 function toI18n(lookup, thing) {
   return Object.prototype.hasOwnProperty.call(lookup, thing)
     ? lookup[thing]
@@ -127,7 +111,7 @@ const parse = (obj, descendants, media, opts) => {
         if (rules[className]) {
           break
         }
-        if (!unitless[key]) {
+        if (!isUnitless(key)) {
           value = normalizeValue(value)
         }
         const declaration = prefix({ [key]: value })
